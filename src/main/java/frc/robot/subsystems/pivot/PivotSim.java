@@ -41,12 +41,13 @@ public class PivotSim implements PivotIO {
   public void updateInputs(PivotIOInputs inputs) {
     arm.update(0.02);
     inputs.connected = true;
-    inputs.positionAngle = getAngle().getDegrees();
-    inputs.velocityRPM = Units.radiansPerSecondToRotationsPerMinute(arm.getVelocityRadPerSec());
+    inputs.positionAngleDegrees = getAngle().getDegrees();
+    inputs.velocityRotationsPerSecond =
+        Units.radiansPerSecondToRotationsPerMinute(arm.getVelocityRadPerSec());
 
     inputs.appliedVoltage = arm.getInput(0);
     inputs.supplyCurrentAmps = arm.getCurrentDrawAmps();
     inputs.torqueCurrentAmps = arm.getCurrentDrawAmps();
-    inputs.temperatureCelsius = 2120; // the atmosphere might catch fire
+    inputs.tempCelsius = 2120; // the atmosphere might catch fire
   }
 }

@@ -30,10 +30,10 @@ public class PivotTalonFx implements PivotIO {
   private final TalonFX _pivotMotorK;
   private final CANcoder _pivotCANCoder;
 
-  private final StatusSignal<Angle> absolutePosition;
-  private final StatusSignal<AngularVelocity> absoluteVelocity;
-  private final StatusSignal<Angle> position;
-  private final StatusSignal<AngularVelocity> velocity;
+  private final StatusSignal<Angle> positionRotations;
+  private final StatusSignal<AngularVelocity> velocityRotationsPerSecond;
+  private final StatusSignal<Angle> absolutePositionRotations;
+  private final StatusSignal<AngularVelocity> absoluteVelocityRotationsPerSecond;
   private final StatusSignal<Voltage> voltage;
   private final StatusSignal<Current> supplyCurrentAmps;
   private final StatusSignal<Current> torqueCurrentAmps;
@@ -42,19 +42,19 @@ public class PivotTalonFx implements PivotIO {
   private final PositionVoltage positionOut = new PositionVoltage(0).withSlot(0);
   private final VoltageOut voltageOut = new VoltageOut(0.0).withEnableFOC(true).withUpdateFreqHz(0);
 
-  private double setPointAngleDegrees;
+  private double setpointAngleDegrees;
 
   public PivotTalonFx() {
     _pivotMotorK = new TalonFX(PivotConstants.pivotTalonId);
     _pivotCANCoder = new CANcoder(PivotConstants.pivotCANCoderId);
-    position = _pivotMotorK.getPosition();
-    velocity = _pivotMotorK.getVelocity();
+    positionRotations = _pivotMotorK.getPosition();
+    velocityRotationsPerSecond = _pivotMotorK.getVelocity();
     voltage = _pivotMotorK.getMotorVoltage();
     supplyCurrentAmps = _pivotMotorK.getSupplyCurrent();
     torqueCurrentAmps = _pivotMotorK.getTorqueCurrent();
     tempCelsius = _pivotMotorK.getDeviceTemp();
-    absolutePosition = _pivotCANCoder.getAbsolutePosition();
-    absoluteVelocity = _pivotCANCoder.getVelocity();
+    absolutePositionRotations = _pivotCANCoder.getAbsolutePosition();
+    absoluteVelocityRotationsPerSecond = _pivotCANCoder.getVelocity();
 
     TalonFXConfiguration cfg = new TalonFXConfiguration();
     // spotless:off
@@ -100,14 +100,14 @@ public class PivotTalonFx implements PivotIO {
 
     BaseStatusSignal.setUpdateFrequencyForAll(
         50,
-        position,
-        velocity,
+        positionRotations,
+        velocityRotationsPerSecond,
         voltage,
         supplyCurrentAmps,
         torqueCurrentAmps,
         tempCelsius,
-        absolutePosition,
-        absoluteVelocity);
+        absolutePositionRotations,
+        absoluteVelocityRotationsPerSecond);
 
     _pivotMotorK.optimizeBusUtilization(0.0, 1.0);
     _pivotCANCoder.optimizeBusUtilization(0.0, 1.0);
@@ -129,7 +129,7 @@ public class PivotTalonFx implements PivotIO {
   public void pivotToAngle(double angleDegrees) {
     _pivotMotorK.setControl(
         positionOut.withPosition(Units.degreesToRotations(angleDegrees)).withSlot(0));
-    setPointAngleDegrees = angleDegrees;
+    setpointAngleDegrees = angleDegrees;
   }
 
   @Override
@@ -152,24 +152,22 @@ public class PivotTalonFx implements PivotIO {
 
     inputs.connected =
         BaseStatusSignal.refreshAll(
-                position,
-                velocity,
+                positionRotations,
+                velocityRotationsPerSecond,
                 voltage,
                 supplyCurrentAmps,
                 torqueCurrentAmps,
                 tempCelsius,
-                absolutePosition,
-                absoluteVelocity)
+                absolutePositionRotations,
+                absoluteVelocityRotationsPerSecond)
             .isOK();
 
-    inputs.positionAngle = Units.rotationsToDegrees(position.getValueAsDouble());
-    inputs.velocityRPM = Units.radiansPerSecondToRotationsPerMinute(velocity.getValueAsDouble());
-
+    inputs.positionAngleDegrees = Units.rotationsToDegrees(positionRotations.getValueAsDouble());
+    inputs.velocityRotationsPerSecond = velocityRotationsPerSecond.getValueAsDouble();
     inputs.appliedVoltage = voltage.getValueAsDouble();
     inputs.supplyCurrentAmps = supplyCurrentAmps.getValueAsDouble();
     inputs.torqueCurrentAmps = torqueCurrentAmps.getValueAsDouble();
-    inputs.temperatureCelsius =
-        tempCelsius.getValueAsDouble(); // dont add absolute position or coder stuff
+    inputs.tempCelsius = tempCelsius.getValueAsDouble();
   }
   // TODO add Input logging
 }

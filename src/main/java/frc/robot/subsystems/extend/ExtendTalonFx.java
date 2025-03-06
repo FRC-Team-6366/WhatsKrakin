@@ -7,7 +7,6 @@ package frc.robot.subsystems.extend;
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.configs.TalonFXConfigurator;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.CANcoder;
@@ -16,7 +15,6 @@ import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
@@ -29,14 +27,14 @@ public class ExtendTalonFx implements ExtendIO {
   private final TalonFX _extendMotorK;
   private final CANcoder _extendCANCoder;
 
-  private final StatusSignal<Angle> position;
-  private final StatusSignal<AngularVelocity> velocity;
+  private final StatusSignal<Angle> positionRotations;
+  private final StatusSignal<AngularVelocity> velocityRotationsPerSecond;
   private final StatusSignal<Voltage> voltage;
   private final StatusSignal<Current> supplyCurrentAmps;
   private final StatusSignal<Current> torqueCurrentAmps;
   private final StatusSignal<Temperature> tempCelsius;
-  private final StatusSignal<Angle> absolutePosition;
-  private final StatusSignal<AngularVelocity> absoluteVelocity;
+  private final StatusSignal<Angle> absolutePositionRotations;
+  private final StatusSignal<AngularVelocity> absoluteVelocityRotationsPerSecond;
 
   private final PositionVoltage positonOut = new PositionVoltage(0).withSlot(0);
   private final VoltageOut voltageOut = new VoltageOut(0.0).withEnableFOC(true).withUpdateFreqHz(0);
@@ -45,14 +43,14 @@ public class ExtendTalonFx implements ExtendIO {
     _extendMotorK = new TalonFX(ExtendConstants.extendTalonId);
     _extendCANCoder = new CANcoder(ExtendConstants.extendCANCoderId);
 
-    position = _extendMotorK.getPosition();
-    velocity = _extendMotorK.getVelocity();
+    positionRotations = _extendMotorK.getPosition();
+    velocityRotationsPerSecond = _extendMotorK.getVelocity();
     voltage = _extendMotorK.getMotorVoltage();
     supplyCurrentAmps = _extendMotorK.getSupplyCurrent();
     torqueCurrentAmps = _extendMotorK.getTorqueCurrent();
     tempCelsius = _extendMotorK.getDeviceTemp();
-    absolutePosition = _extendCANCoder.getAbsolutePosition();
-    absoluteVelocity = _extendCANCoder.getVelocity();
+    absolutePositionRotations = _extendCANCoder.getAbsolutePosition();
+    absoluteVelocityRotationsPerSecond = _extendCANCoder.getVelocity();
 
     TalonFXConfiguration cfg = new TalonFXConfiguration();
     // spotless:off
@@ -94,14 +92,14 @@ public class ExtendTalonFx implements ExtendIO {
 
     BaseStatusSignal.setUpdateFrequencyForAll(
         50,
-        position,
-        velocity,
+        positionRotations,
+        velocityRotationsPerSecond,
         voltage,
         supplyCurrentAmps,
         torqueCurrentAmps,
         tempCelsius,
-        absolutePosition,
-        absoluteVelocity);
+        absolutePositionRotations,
+        absoluteVelocityRotationsPerSecond);
 
     _extendMotorK.optimizeBusUtilization(0.0, 1.0);
     _extendCANCoder.optimizeBusUtilization(0.0, 1.0);
@@ -120,12 +118,12 @@ public class ExtendTalonFx implements ExtendIO {
   }
 
   @Override
-  public void extendToLength(double extendLengthInch, double currentPivotRotations) {
+  public void extendToLength(double extendLengthInches, double currentPivotRotations) {
     double targetExtendRotations =
-        (extendLengthInch
-                - (currentPivotRotations * ExtendConstants.spoolCircumference)
+        (extendLengthInches
+                - (currentPivotRotations * ExtendConstants.spoolCircumferenceInches)
                 - ExtendConstants.extendOffsetInchAtZeroDegrees)
-            / (ExtendConstants.spoolCircumference);
+            / (ExtendConstants.spoolCircumferenceInches);
     _extendMotorK.setControl(positonOut.withPosition(targetExtendRotations).withSlot(0));
   }
 
@@ -133,38 +131,33 @@ public class ExtendTalonFx implements ExtendIO {
   public double getLength(double currentPivotRotations) {
     return ExtendConstants.extendOffsetInchAtZeroDegrees
         + (_extendMotorK.getPosition().getValueAsDouble() * currentPivotRotations)
-            * (ExtendConstants.spoolCircumference);
+            * (ExtendConstants.spoolCircumferenceInches);
   }
 
   @Override
-  public void updateConfig() {
-
-  }
+  public void updateConfig() {}
 
   @Override
   public void updateInputs(ExtendIOInputs inputs) {
     inputs.connected =
         BaseStatusSignal.refreshAll(
-                position,
-                velocity,
+                positionRotations,
+                velocityRotationsPerSecond,
                 voltage,
                 supplyCurrentAmps,
                 torqueCurrentAmps,
                 tempCelsius,
-                absolutePosition,
-                absoluteVelocity)
+                absolutePositionRotations,
+                absoluteVelocityRotationsPerSecond)
             .isOK();
 
-    inputs.positionInch = position.getValueAsDouble() * (2 * Math.PI * 2);
-    inputs.positionExtensionRotation = position.getValueAsDouble();
-    inputs.velocityRPM = Units.radiansPerSecondToRotationsPerMinute(velocity.getValueAsDouble());
-
+    inputs.positionRotations = positionRotations.getValueAsDouble();
+    inputs.positionInches = positionRotations.getValueAsDouble() * (2 * Math.PI * 2);
+    inputs.velocityRotationsPerSecond = velocityRotationsPerSecond.getValueAsDouble();
     inputs.appliedVoltage = voltage.getValueAsDouble();
     inputs.supplyCurrentAmps = supplyCurrentAmps.getValueAsDouble();
     inputs.torqueCurrentAmps = torqueCurrentAmps.getValueAsDouble();
-    inputs.temperatureCelsius = tempCelsius.getValueAsDouble();
+    inputs.tempCelsius = tempCelsius.getValueAsDouble();
   }
-
-  // TODO add absolute encoder
   // TODO add input loggging
 }

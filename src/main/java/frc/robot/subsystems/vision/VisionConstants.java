@@ -46,7 +46,7 @@ public class VisionConstants {
           Units.inchesToMeters(14.734),
           new Rotation3d(
               Units.degreesToRadians(-1), Units.degreesToRadians(11), Units.degreesToRadians(-6)));
-  public static Transform3d robotToCamera2 =
+  public static Transform3d robotToCamera2 = // update, changed from hang interference
       new Transform3d(
           Units.inchesToMeters(2.55),
           Units.inchesToMeters(-7.109),
@@ -80,8 +80,8 @@ public class VisionConstants {
       new double[] {
         1.0, // Camera 0
         1.0, // Camera 1
-        0.0, // Camera 2
-        0.0 // Camera 3
+        1.0, // Camera 2
+        1.0 // Camera 3
       };
 
   // Multipliers to apply for MegaTag 2 observations

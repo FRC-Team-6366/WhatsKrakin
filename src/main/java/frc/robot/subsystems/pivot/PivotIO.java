@@ -13,12 +13,12 @@ public interface PivotIO {
   public static class PivotIOInputs {
 
     public boolean connected = false;
-    public double positionAngle = 0.0;
-    public double velocityRPM = 0.0;
+    public double positionAngleDegrees = 0.0;
+    public double velocityRotationsPerSecond = 0.0;
     public double appliedVoltage = 0.0;
     public double supplyCurrentAmps = 0.0;
     public double torqueCurrentAmps = 0.0;
-    public double temperatureCelsius = 0.0;
+    public double tempCelsius = 0.0;
   }
 
   public default void setBrakeMode(boolean brakeMode) {}

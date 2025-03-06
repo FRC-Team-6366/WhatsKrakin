@@ -5,7 +5,6 @@
 package frc.robot.subsystems.extend;
 
 import edu.wpi.first.math.filter.Debouncer;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.littletonrobotics.junction.Logger;
 
@@ -25,9 +24,9 @@ public class Extend extends SubsystemBase {
     Logger.processInputs("Extend", inputs);
   }
 
-  public void extendToLength(double extendLengthInch, double currentPivotRotations) {
-    io.extendToLength(extendLengthInch, currentPivotRotations);
-    this.setPointLengthInches = extendLengthInch;
+  public void extendToLength(double extendLengthInches, double currentPivotRotations) {
+    io.extendToLength(extendLengthInches, currentPivotRotations);
+    this.setPointLengthInches = extendLengthInches;
   }
 
   public double getLength(double currentPivotRotations) {
@@ -39,8 +38,9 @@ public class Extend extends SubsystemBase {
   }
 
   public boolean atSetPoint(double currentPivotRotations) {
-    Debouncer setPointDebouncer = new Debouncer(0.5);
-    return setPointDebouncer.calculate(Math.abs(io.getLength(currentPivotRotations) - setPointLengthInches) < 1);
+    Debouncer setpointDebouncer = new Debouncer(0.5);
+    return setpointDebouncer.calculate(
+        Math.abs(io.getLength(currentPivotRotations) - setPointLengthInches) < 1);
   }
 
   public void updateConfig() {

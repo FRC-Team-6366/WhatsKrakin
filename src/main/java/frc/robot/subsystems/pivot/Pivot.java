@@ -43,9 +43,9 @@ public class Pivot extends SubsystemBase {
   }
 
   public boolean atSetPoint() {
-    Debouncer setPointDebouncer = new Debouncer(0.5);
-    return setPointDebouncer.calculate(Math.abs(io.getAngle().getDegrees() - setpointAngleDegrees)
-        < 1);
+    Debouncer setpointDebouncer = new Debouncer(0.5);
+    return setpointDebouncer.calculate(
+        Math.abs(io.getAngle().getDegrees() - setpointAngleDegrees) < 1);
   }
 
   public void updateConfig(double extendLengthInches) {

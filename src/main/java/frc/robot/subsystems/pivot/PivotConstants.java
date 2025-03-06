@@ -3,10 +3,10 @@ package frc.robot.subsystems.pivot;
 public class PivotConstants {
   public static final int pivotTalonId = 20;
   public static final int pivotCANCoderId = 23;
-  public static final boolean pivotInvert = false;
+  public static final boolean pivotInvert = false; // confirm and match cancoder
   public static final boolean pivotNeutralModeBrake = false;
   public static final double pivotPeakVoltage = 6;
-  public static final double pivotGearRatio = 36;
+  public static final double pivotGearRatio = 36; // confirm
 
   // Soft Limits
   public static final boolean pivotForwardSoftLimitEnabled = false;
@@ -23,5 +23,6 @@ public class PivotConstants {
   public static double kV = 0;
   public static double kA = 0;
 
-  public static double kGExtendFactor = 1; //proportional increase to kG for each inch of extension, update
+  public static double kGExtendFactor =
+      1; // update, proportional increase to kG for each inch of extension
 }

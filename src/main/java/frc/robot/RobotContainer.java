@@ -16,7 +16,6 @@ package frc.robot;
 import static frc.robot.subsystems.vision.VisionConstants.*;
 
 import com.pathplanner.lib.auto.AutoBuilder;
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
@@ -193,12 +192,17 @@ public class RobotContainer {
     driverController.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
 
     // Reset gyro to 0° when B button is pressed
-    driverController.b().onTrue((climb.getAngle() < ClimbConstants.climbPrepAngleDegrees) ? new ClimbPrep(climb): new ClimbHang(climb));
+    driverController
+        .b()
+        .onTrue(
+            (climb.getAngle() < ClimbConstants.climbPrepAngleDegrees)
+                ? new ClimbPrep(climb)
+                : new ClimbHang(climb));
 
     operatorController
         .a()
         .whileTrue(
-            new ArmToSetPoint(
+            new ArmToSetpoint(
                 pivot,
                 extend,
                 SetpointConstants.L2.pivotAngleDegrees(),
@@ -207,7 +211,7 @@ public class RobotContainer {
     operatorController
         .b()
         .whileTrue(
-            new ArmToSetPoint(
+            new ArmToSetpoint(
                 pivot,
                 extend,
                 SetpointConstants.L3.pivotAngleDegrees(),
@@ -216,7 +220,7 @@ public class RobotContainer {
     operatorController
         .y()
         .whileTrue(
-            new ArmToSetPoint(
+            new ArmToSetpoint(
                 pivot,
                 extend,
                 SetpointConstants.L4.pivotAngleDegrees(),
@@ -225,7 +229,7 @@ public class RobotContainer {
     operatorController
         .x()
         .whileTrue(
-            new ArmToSetPoint(
+            new ArmToSetpoint(
                 pivot,
                 extend,
                 SetpointConstants.CORAL.pivotAngleDegrees(),

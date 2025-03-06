@@ -13,13 +13,13 @@ public interface ExtendIO {
   public static class ExtendIOInputs {
 
     public boolean connected = false;
-    public double positionInch = 0.0;
-    public double velocityRPM = 0.0;
-    public double positionExtensionRotation = 0.0;
+    public double positionInches = 0.0;
+    public double velocityRotationsPerSecond = 0.0;
+    public double positionRotations = 0.0;
     public double appliedVoltage = 0.0;
     public double supplyCurrentAmps = 0.0;
     public double torqueCurrentAmps = 0.0;
-    public double temperatureCelsius = 0.0;
+    public double tempCelsius = 0.0;
   }
 
   public default void setBrakeMode(boolean brakeMode) {}
@@ -27,7 +27,7 @@ public interface ExtendIO {
   /**
    * @param inch extends to distance in inches from start
    */
-  public default void extendToLength(double extendLengthInch, double currentPivotRotations) {}
+  public default void extendToLength(double extendLengthInches, double currentPivotRotations) {}
 
   public default void runVolts(double volts) {}
 

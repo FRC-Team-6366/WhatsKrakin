@@ -19,8 +19,8 @@ public class ClimbTalonFX implements ClimbIO {
 
   private final TalonFX _climbMotorK;
 
-  private final StatusSignal<Angle> position;
-  private final StatusSignal<AngularVelocity> velocity;
+  private final StatusSignal<Angle> positionRotations;
+  private final StatusSignal<AngularVelocity> velocityRotationsPerSecond;
   private final StatusSignal<Voltage> voltage;
   private final StatusSignal<Current> supplyCurrentAmps;
   private final StatusSignal<Current> torqueCurrentAmps;
@@ -30,8 +30,8 @@ public class ClimbTalonFX implements ClimbIO {
 
   public ClimbTalonFX() {
     _climbMotorK = new TalonFX(ClimbConstants.climbTalonId);
-    position = _climbMotorK.getPosition();
-    velocity = _climbMotorK.getVelocity();
+    positionRotations = _climbMotorK.getPosition();
+    velocityRotationsPerSecond = _climbMotorK.getVelocity();
     voltage = _climbMotorK.getMotorVoltage();
     supplyCurrentAmps = _climbMotorK.getSupplyCurrent();
     torqueCurrentAmps = _climbMotorK.getTorqueCurrent();
@@ -61,7 +61,13 @@ public class ClimbTalonFX implements ClimbIO {
     _climbMotorK.setPosition(0);
 
     BaseStatusSignal.setUpdateFrequencyForAll(
-        50, position, velocity, voltage, supplyCurrentAmps, torqueCurrentAmps, tempCelsius);
+        50,
+        positionRotations,
+        velocityRotationsPerSecond,
+        voltage,
+        supplyCurrentAmps,
+        torqueCurrentAmps,
+        tempCelsius);
 
     _climbMotorK.optimizeBusUtilization(0.0, 1.0);
 
@@ -75,24 +81,29 @@ public class ClimbTalonFX implements ClimbIO {
 
   @Override
   public double getAngle() {
-    return position.getValueAsDouble() / ClimbConstants.climbGearRatio;
+    return positionRotations.getValueAsDouble() / ClimbConstants.climbGearRatio;
   }
 
   @Override
   public void updateInputs(ClimbIOInputs inputs) {
     inputs.connected =
         BaseStatusSignal.refreshAll(
-                position, velocity, voltage, supplyCurrentAmps, torqueCurrentAmps, tempCelsius)
+                positionRotations,
+                velocityRotationsPerSecond,
+                voltage,
+                supplyCurrentAmps,
+                torqueCurrentAmps,
+                tempCelsius)
             .isOK();
 
-    inputs.position = position.getValueAsDouble();
+    inputs.positionRotations = positionRotations.getValueAsDouble();
     inputs.angleDegrees =
-        Units.rotationsToDegrees(position.getValueAsDouble() / ClimbConstants.climbGearRatio);
-    inputs.velocityRPM = Units.radiansPerSecondToRotationsPerMinute(velocity.getValueAsDouble());
-
+        Units.rotationsToDegrees(
+            positionRotations.getValueAsDouble() / ClimbConstants.climbGearRatio);
+    inputs.velocityRotationsPerSecond = velocityRotationsPerSecond.getValueAsDouble();
     inputs.appliedVoltage = voltage.getValueAsDouble();
     inputs.supplyCurrentAmps = supplyCurrentAmps.getValueAsDouble();
     inputs.torqueCurrentAmps = torqueCurrentAmps.getValueAsDouble();
-    inputs.temperatureCelsius = tempCelsius.getValueAsDouble();
+    inputs.tempCelsius = tempCelsius.getValueAsDouble();
   }
 }
