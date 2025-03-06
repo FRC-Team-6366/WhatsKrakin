@@ -78,7 +78,7 @@ public class ArmTalonFx implements ArmIO {
     cfg.Slot0.GravityType = GravityTypeValue.Arm_Cosine;
     cfg.Feedback.SensorToMechanismRatio = 1;
     cfg.Feedback.RotorToSensorRatio = SuperStructureConstants.angleGearRatio;
-    cfg.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.FusedCANcoder;
+    cfg.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.FusedCANcoder; //rezero CANcoder
     cfg.Feedback.FeedbackRemoteSensorID = _angleCANcoder.getDeviceID(); //connecting CAN to motor
     // voltage limits
     cfg.Voltage.PeakForwardVoltage = SuperStructureConstants.anglePeakVoltage;

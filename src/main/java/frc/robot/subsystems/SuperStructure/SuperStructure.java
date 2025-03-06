@@ -138,7 +138,8 @@ public class SuperStructure {
       boolean opRb,
       boolean DrRb,
       boolean DrLb,
-      boolean DrA) {
+      boolean DrA,
+      boolean DrY) {
 
     if ((opLb && opRb)) { // force end sequnce
       // sets position using constants
@@ -261,13 +262,13 @@ public class SuperStructure {
       extendDistance = SuperStructureConstants.HomeExtend;
       // sequence holder
       lastPose = sequence.Home;
-    } else if (DrRb) {
+    } else if (DrA) {
       // go to set position in constants or prepares for climb
       climb.runVolts(2);
 
       // sequence holder for climb
       climbPose = otherSequence.PrepareClimb;
-    } else if (DrLb) {
+    } else if (DrY) {
       // go to set position in constants and does climb
       // climbAngle = SuperStructureConstants.doClimb;
       climb.runVolts(-2);
