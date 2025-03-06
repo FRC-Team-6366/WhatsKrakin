@@ -18,5 +18,9 @@ public interface ClimbIO {
 
   public default void runVolts(double volts) {}
 
+  public default double getAngle() {
+    return 0;
+  }
+
   public default void updateInputs(ClimbIOInputs inputs) {}
 }

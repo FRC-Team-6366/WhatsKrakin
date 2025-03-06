@@ -22,4 +22,8 @@ public class Climb extends SubsystemBase {
   public void runVolts(double volts) {
     io.runVolts(volts);
   }
+
+  public double getAngle() {
+    return io.getAngle();
+  }
 }

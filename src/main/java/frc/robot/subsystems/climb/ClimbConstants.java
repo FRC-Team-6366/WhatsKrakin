@@ -8,10 +8,14 @@ public class ClimbConstants {
   public static final double climbPeakVoltage = 2;
   public static final double climbGearRatio = 180;
 
-  // Soft Limits
-  public static final double climbForwardSoftLimit = 170; // in motor rotations
-  public static final boolean climbForwardSoftLimitEnabled = false;
+  //Command Stop Points
+  public static final double climbPrepAngleDegrees = 0; //update
+  public static final double climbHangAngleDegrees = 0; //update
 
-  public static final double climbReverseSoftLimit = 0;
+  // Soft Limits
+  public static final boolean climbForwardSoftLimitEnabled = false;
+  public static final double climbForwardSoftLimit = 0; // update
   public static final boolean climbReverseSoftLimitEnabled = false;
+  public static final double climbReverseSoftLimit = 0; //update
+  
 }

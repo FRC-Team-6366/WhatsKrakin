@@ -74,6 +74,11 @@ public class ClimbTalonFX implements ClimbIO {
   }
 
   @Override
+  public double getAngle() {
+    return position.getValueAsDouble() / ClimbConstants.climbGearRatio;
+  }
+
+  @Override
   public void updateInputs(ClimbIOInputs inputs) {
     inputs.connected =
         BaseStatusSignal.refreshAll(
