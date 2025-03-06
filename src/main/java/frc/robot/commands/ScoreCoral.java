@@ -29,7 +29,7 @@ public class ScoreCoral extends Command {
   public void initialize() {
     prepAngleDegrees = pivot.getAngle().getDegrees();
     prepLengthInches = extend.getLength(prepAngleDegrees);
-    new ArmToSetPoint(pivot, extend, prepAngleDegrees + 5, prepLengthInches - 5, false);
+    new ArmToSetpoint(pivot, extend, prepAngleDegrees + 5, prepLengthInches - 5, false);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -39,7 +39,7 @@ public class ScoreCoral extends Command {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    new ArmToSetPoint(
+    new ArmToSetpoint(
         pivot,
         extend,
         SetpointConstants.HOME.pivotAngleDegrees(),

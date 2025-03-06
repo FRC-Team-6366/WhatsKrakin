@@ -9,7 +9,7 @@ import frc.robot.subsystems.extend.Extend;
 import frc.robot.subsystems.pivot.Pivot;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
-public class ArmToSetPoint extends Command {
+public class ArmToSetpoint extends Command {
   Pivot pivot;
   Extend extend;
   double thetaDegrees;
@@ -18,7 +18,7 @@ public class ArmToSetPoint extends Command {
   boolean saftyExtend;
 
   /** Creates a new ArmToSetPoint. */
-  public ArmToSetPoint(
+  public ArmToSetpoint(
       Pivot pivot, Extend extend, double thetaDegrees, double rInches, boolean saftyExtend) {
     // Use addRequirements() here to declare subsystem dependencies.
     pivot = this.pivot;
