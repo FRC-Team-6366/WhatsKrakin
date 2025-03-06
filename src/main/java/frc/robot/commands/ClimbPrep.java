@@ -15,6 +15,7 @@ public class ClimbPrep extends Command {
   public ClimbPrep(Climb climb) {
     climb = this.climb;
     // Use addRequirements() here to declare subsystem dependencies.
+    addRequirements(climb);
   }
 
   // Called when the command is initially scheduled.
