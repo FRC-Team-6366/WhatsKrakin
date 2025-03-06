@@ -6,13 +6,14 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.climb.Climb;
+import frc.robot.subsystems.climb.ClimbConstants;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
-public class ClimbUp extends Command {
+public class ClimbHang extends Command {
 
   Climb climb;
   /** Creates a new ClimbUp. */
-  public ClimbUp(Climb climb) {
+  public ClimbHang(Climb climb) {
     climb = this.climb;
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(climb);
@@ -35,6 +36,6 @@ public class ClimbUp extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    return climb.getAngle() > ClimbConstants.climbHangAngleDegrees;
   }
 }
