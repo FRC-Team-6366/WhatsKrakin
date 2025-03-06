@@ -16,7 +16,6 @@ package frc.robot;
 import static frc.robot.subsystems.vision.VisionConstants.*;
 
 import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.GenericHID;
@@ -25,29 +24,25 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
-import frc.robot.commands.Auto.ArmL4;
-import frc.robot.commands.Auto.ArmPrep;
-import frc.robot.commands.DriveCommands;
+import frc.robot.commands.*;
 import frc.robot.generated.TunerConstants;
-import frc.robot.subsystems.SuperStructure.Arm.Arm;
-import frc.robot.subsystems.SuperStructure.Arm.ArmSim;
-import frc.robot.subsystems.SuperStructure.Arm.ArmTalonFx;
-import frc.robot.subsystems.SuperStructure.Climb.Climb;
-import frc.robot.subsystems.SuperStructure.Extension.Extension;
-import frc.robot.subsystems.SuperStructure.Extension.ExtensionSim;
-import frc.robot.subsystems.SuperStructure.Extension.ExtensionTalonFx;
-import frc.robot.subsystems.SuperStructure.SuperStructure;
+import frc.robot.subsystems.climb.Climb;
+import frc.robot.subsystems.climb.ClimbTalonFX;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
+import frc.robot.subsystems.extend.Extend;
+import frc.robot.subsystems.extend.ExtendTalonFx;
+import frc.robot.subsystems.pivot.Pivot;
+import frc.robot.subsystems.pivot.PivotTalonFx;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIO;
 import frc.robot.subsystems.vision.VisionIOPhotonVision;
 import frc.robot.subsystems.vision.VisionIOPhotonVisionSim;
-import frc.robot.util.IO;
+import frc.robot.util.SetpointConstants;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -63,21 +58,17 @@ public class RobotContainer {
 
   private final Drive drive;
 
-  public static IO io = new IO(); // creates a version of IO
-  public static Extension extension;
-  public static Arm arm;
+  public static Pivot pivot;
+  public static Extend extend;
   public static Climb climb;
-  public static SuperStructure superStructure;
 
   // Controller
-  private final CommandXboxController controller = new CommandXboxController(0);
-  //   private final CommandXboxController operator = new CommandXboxController(1);
+  private final CommandXboxController driverController = new CommandXboxController(0);
+  private final CommandXboxController operatorController = new CommandXboxController(1);
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
 
-  private Command ArmL4 = new ArmL4();
-  private Command ArmPrep = new ArmPrep();
   // TODO make collection command
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
@@ -102,9 +93,9 @@ public class RobotContainer {
                 // new VisionIOPhotonVision(camera2Name, robotToCamera2),
                 // new VisionIOPhotonVision(camera3Name, robotToCamera3)
                 );
-        arm = new Arm(new ArmTalonFx());
-        extension = new Extension(new ExtensionTalonFx());
-        superStructure = new SuperStructure(arm, extension, climb);
+        pivot = new Pivot(new PivotTalonFx());
+        extend = new Extend(new ExtendTalonFx());
+        climb = new Climb(new ClimbTalonFX());
 
         break;
 
@@ -126,9 +117,9 @@ public class RobotContainer {
                 // new VisionIOPhotonVisionSim(camera2Name, robotToCamera2, drive::getPose),
                 // new VisionIOPhotonVisionSim(camera3Name, robotToCamera3, drive::getPose)
                 );
-        arm = new Arm(new ArmSim());
-        extension = new Extension(new ExtensionSim());
-        superStructure = new SuperStructure(arm, extension, null);
+        pivot = new Pivot(new PivotTalonFx());
+        extend = new Extend(new ExtendTalonFx());
+        climb = new Climb(new ClimbTalonFX());
         break;
 
       default:
@@ -142,12 +133,11 @@ public class RobotContainer {
                 new ModuleIO() {},
                 new ModuleIO() {});
         vision = new Vision(drive::addVisionMeasurement, new VisionIO() {}, new VisionIO() {});
-        superStructure = new SuperStructure(null, null, null);
+        pivot = null;
+        extend = null;
+        climb = null;
         break;
     }
-
-    NamedCommands.registerCommand("L4", ArmL4);
-    NamedCommands.registerCommand("Prep", ArmPrep);
 
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
@@ -179,29 +169,30 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
+
     // Default command, normal field-relative drive
     drive.setDefaultCommand(
         DriveCommands.joystickDrive(
             drive,
-            () -> -controller.getLeftY(),
-            () -> -controller.getLeftX(),
-            () -> -controller.getRightX()));
+            () -> -driverController.getLeftY(),
+            () -> -driverController.getLeftX(),
+            () -> -driverController.getRightX()));
 
     // Lock to 0° when A button is held
-    controller
+    driverController
         .a()
         .whileTrue(
             DriveCommands.joystickDriveAtAngle(
                 drive,
-                () -> -controller.getLeftY(),
-                () -> -controller.getLeftX(),
+                () -> -driverController.getLeftY(),
+                () -> -driverController.getLeftX(),
                 () -> new Rotation2d()));
 
     // Switch to X pattern when X button is pressed
-    controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
+    driverController.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
 
     // Reset gyro to 0° when B button is pressed
-    controller
+    driverController
         .b()
         .onTrue(
             Commands.runOnce(
@@ -210,6 +201,44 @@ public class RobotContainer {
                             new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
                     drive)
                 .ignoringDisable(true));
+
+    operatorController
+        .a()
+        .whileTrue(
+            new ArmToSetPoint(
+                pivot,
+                extend,
+                SetpointConstants.L2.pivotAngleDegrees(),
+                SetpointConstants.L2.extendLengthInches(),
+                true));
+    operatorController
+        .b()
+        .whileTrue(
+            new ArmToSetPoint(
+                pivot,
+                extend,
+                SetpointConstants.L3.pivotAngleDegrees(),
+                SetpointConstants.L3.extendLengthInches(),
+                true));
+    operatorController
+        .y()
+        .whileTrue(
+            new ArmToSetPoint(
+                pivot,
+                extend,
+                SetpointConstants.L4.pivotAngleDegrees(),
+                SetpointConstants.L4.extendLengthInches(),
+                true));
+    operatorController
+        .x()
+        .whileTrue(
+            new ArmToSetPoint(
+                pivot,
+                extend,
+                SetpointConstants.CORAL.pivotAngleDegrees(),
+                SetpointConstants.CORAL.extendLengthInches(),
+                true));
+    operatorController.rightTrigger(0.1).whileTrue(new ScoreCoral(pivot, extend));
   }
 
   private void configurePoleBindings() {}

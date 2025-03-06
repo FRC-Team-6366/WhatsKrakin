@@ -2,36 +2,30 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.subsystems.SuperStructure.Arm;
+package frc.robot.subsystems.pivot;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import org.littletonrobotics.junction.AutoLog;
 
 /** Add your docs here. */
-public interface ArmIO {
+public interface PivotIO {
   @AutoLog // Auto logs inputs
-  public static class ArmIOInputs {
-    public boolean connected = false;
+  public static class PivotIOInputs {
 
+    public boolean connected = false;
     public double positionAngle = 0.0;
     public double velocityRPM = 0.0;
-
     public double appliedVoltage = 0.0;
     public double supplyCurrentAmps = 0.0;
     public double torqueCurrentAmps = 0.0;
     public double temperatureCelsius = 0.0;
   }
 
-  public default void updateInputs(ArmIOInputs inputs) {} // Updates inputs
-
-  /**
-   * @param angle go to angle in rotations
-   */
-  public default void setAngle(double angle) {}
+  public default void setBrakeMode(boolean brakeMode) {}
 
   public default void runVolts(double volts) {}
 
-  public default void toggleBrake(boolean brakeMode) {}
+  public default void pivotToAngle(double angleDegrees) {}
 
   /**
    * gives current angle of actual arm
@@ -41,4 +35,8 @@ public interface ArmIO {
   public default Rotation2d getAngle() {
     return new Rotation2d();
   }
+
+  public default void updateTune() {}
+
+  public default void updateInputs(PivotIOInputs inputs) {} // Updates inputs
 }

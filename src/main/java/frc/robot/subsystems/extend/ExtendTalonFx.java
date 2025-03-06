@@ -2,11 +2,12 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.subsystems.SuperStructure.Extension;
+package frc.robot.subsystems.extend;
 
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.configs.TalonFXConfigurator;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.CANcoder;
@@ -21,13 +22,12 @@ import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Temperature;
 import edu.wpi.first.units.measure.Voltage;
-import frc.robot.subsystems.SuperStructure.SuperStructureConstants;
 
 /** Add your docs here. */
-public class ExtensionTalonFx implements ExtensionIO {
+public class ExtendTalonFx implements ExtendIO {
 
   private final TalonFX _extendMotorK;
-  private final CANcoder _extendCANcoder;
+  private final CANcoder _extendCANCoder;
 
   private final StatusSignal<Angle> position;
   private final StatusSignal<AngularVelocity> velocity;
@@ -41,9 +41,9 @@ public class ExtensionTalonFx implements ExtensionIO {
   private final PositionVoltage positonOut = new PositionVoltage(0).withSlot(0);
   private final VoltageOut voltageOut = new VoltageOut(0.0).withEnableFOC(true).withUpdateFreqHz(0);
 
-  public ExtensionTalonFx() {
-    _extendMotorK = new TalonFX(SuperStructureConstants.ExtensionId);
-    _extendCANcoder = new CANcoder(SuperStructureConstants.ExtensionEncoderID);
+  public ExtendTalonFx() {
+    _extendMotorK = new TalonFX(ExtendConstants.extendTalonId);
+    _extendCANCoder = new CANcoder(ExtendConstants.extendCANCoderId);
 
     position = _extendMotorK.getPosition();
     velocity = _extendMotorK.getVelocity();
@@ -51,39 +51,45 @@ public class ExtensionTalonFx implements ExtensionIO {
     supplyCurrentAmps = _extendMotorK.getSupplyCurrent();
     torqueCurrentAmps = _extendMotorK.getTorqueCurrent();
     tempCelsius = _extendMotorK.getDeviceTemp();
-    absolutePosition = _extendCANcoder.getAbsolutePosition();
-    absoluteVelocity = _extendCANcoder.getVelocity();
+    absolutePosition = _extendCANCoder.getAbsolutePosition();
+    absoluteVelocity = _extendCANCoder.getVelocity();
 
     TalonFXConfiguration cfg = new TalonFXConfiguration();
     // spotless:off
     cfg.MotorOutput
-        .withInverted(SuperStructureConstants.ExtensionInvert ? InvertedValue.Clockwise_Positive : InvertedValue.CounterClockwise_Positive)
-        .withNeutralMode(NeutralModeValue.Coast);
+        .withInverted(
+            ExtendConstants.extendInvert
+            ? InvertedValue.Clockwise_Positive
+            : InvertedValue.CounterClockwise_Positive
+        )
+        .withNeutralMode(ExtendConstants.extendNeutralModeBrake ? NeutralModeValue.Brake : NeutralModeValue.Coast);
     cfg.CurrentLimits
         .withSupplyCurrentLimitEnable(true)
         .withSupplyCurrentLimit(40);
     cfg.ClosedLoopGeneral.ContinuousWrap = false;
     cfg.ClosedLoopRamps.VoltageClosedLoopRampPeriod = 0.1;
-    cfg.Slot0.kP = SuperStructureConstants.ExtensionP;
-    cfg.Slot0.kI = SuperStructureConstants.ExtensionI;
-    cfg.Slot0.kD = SuperStructureConstants.ExtensionD;
-    cfg.Slot0.kG = SuperStructureConstants.ExtensionG;
-    cfg.Slot0.kV = SuperStructureConstants.ExtensionV;
-    cfg.Slot0.kS = SuperStructureConstants.ExtensionS;
-    cfg.Slot0.kA = SuperStructureConstants.ExtensionA;
-    cfg.SoftwareLimitSwitch.ForwardSoftLimitEnable = false;
-    cfg.SoftwareLimitSwitch.ForwardSoftLimitThreshold = SuperStructureConstants.extensionSoftLimitHigh;
-    cfg.SoftwareLimitSwitch.ReverseSoftLimitEnable = false;
-    cfg.SoftwareLimitSwitch.ReverseSoftLimitThreshold = SuperStructureConstants.extensionSoftLimitLow;
+    cfg.Slot0.kP = ExtendConstants.kP;
+    cfg.Slot0.kI = ExtendConstants.kI;
+    cfg.Slot0.kD = ExtendConstants.kD;
+    cfg.Slot0.kG = ExtendConstants.kG;
+    cfg.Slot0.kS = ExtendConstants.kS;
+    cfg.Slot0.kV = ExtendConstants.kV;
+    cfg.Slot0.kA = ExtendConstants.kA;
+    cfg.SoftwareLimitSwitch.ForwardSoftLimitEnable = ExtendConstants.extendForwardSoftLimitEnabled;
+    cfg.SoftwareLimitSwitch.ForwardSoftLimitThreshold = ExtendConstants.extendForwardSoftLimit;
+    cfg.SoftwareLimitSwitch.ReverseSoftLimitEnable = ExtendConstants.extendReverseSoftLimitEnabled;
+    cfg.SoftwareLimitSwitch.ReverseSoftLimitThreshold = ExtendConstants.extendReverseSoftLimit;
     cfg.Slot0.GravityType = GravityTypeValue.Elevator_Static;
-    cfg.Feedback.SensorToMechanismRatio = 1; 
-    cfg.Feedback.RotorToSensorRatio = SuperStructureConstants.extensionGearRatio;
+    cfg.Feedback.SensorToMechanismRatio = 1;
+    cfg.Feedback.RotorToSensorRatio = ExtendConstants.extendGearRatio;
     cfg.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.FusedCANcoder;
-    cfg.Feedback.FeedbackRemoteSensorID = _extendCANcoder.getDeviceID(); //Add this when adding an EnCoder gives it its ID
+    cfg.Feedback.FeedbackRemoteSensorID = _extendCANCoder.getDeviceID(); //Add this when adding an EnCoder gives it its ID
     
     // voltage limits
-    cfg.Voltage.PeakForwardVoltage = SuperStructureConstants.extensionPeakVoltage;
-    cfg.Voltage.PeakReverseVoltage = -SuperStructureConstants.extensionPeakVoltage;
+    cfg.Voltage.PeakForwardVoltage = ExtendConstants.extendPeakVoltage;
+    cfg.Voltage.PeakReverseVoltage = -ExtendConstants.extendPeakVoltage;
+
+    _extendMotorK.setPosition(_extendCANCoder.getAbsolutePosition().getValueAsDouble());
     // spotless:on
 
     BaseStatusSignal.setUpdateFrequencyForAll(
@@ -96,17 +102,16 @@ public class ExtensionTalonFx implements ExtensionIO {
         tempCelsius,
         absolutePosition,
         absoluteVelocity);
-    _extendMotorK.optimizeBusUtilization(0.0, 1.0);
 
-    _extendCANcoder.optimizeBusUtilization(0.0, 1.0);
+    _extendMotorK.optimizeBusUtilization(0.0, 1.0);
+    _extendCANCoder.optimizeBusUtilization(0.0, 1.0);
+
     _extendMotorK.getConfigurator().apply(cfg);
-    _extendMotorK.setPosition(_extendCANcoder.getAbsolutePosition().getValueAsDouble());
   }
 
   @Override
-  public void extendToDistance(double inch) {
-    double target = inch / (2 * Math.PI * 2);
-    _extendMotorK.setControl(positonOut.withPosition(target).withSlot(0));
+  public void setBrakeMode(boolean brakeMode) {
+    _extendMotorK.setNeutralMode(brakeMode ? NeutralModeValue.Brake : NeutralModeValue.Coast);
   }
 
   @Override
@@ -115,12 +120,24 @@ public class ExtensionTalonFx implements ExtensionIO {
   }
 
   @Override
-  public double getExtend() {
-    return _extendMotorK.getPosition().getValueAsDouble() * (2 * Math.PI * 2);
+  public void extendToLength(double extendLengthInch, double currentPivotRotations) {
+    double targetExtendRotations =
+        (extendLengthInch
+                - (currentPivotRotations * ExtendConstants.spoolCircumference)
+                - ExtendConstants.extendOffsetInchAtZeroDegrees)
+            / (ExtendConstants.spoolCircumference);
+    _extendMotorK.setControl(positonOut.withPosition(targetExtendRotations).withSlot(0));
   }
 
   @Override
-  public void updateInputs(ExtensionIOInputs inputs) {
+  public double getLength(double currentPivotRotations) {
+    return ExtendConstants.extendOffsetInchAtZeroDegrees
+        + (_extendMotorK.getPosition().getValueAsDouble() * currentPivotRotations)
+            * (ExtendConstants.spoolCircumference);
+  }
+
+  @Override
+  public void updateInputs(ExtendIOInputs inputs) {
     inputs.connected =
         BaseStatusSignal.refreshAll(
                 position,
