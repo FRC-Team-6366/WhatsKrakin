@@ -29,7 +29,7 @@ public final class SuperStructureConstants {
   public static int ArmEncoderId = 22;
   public static int ExtensionId = 20;
   public static int ExtensionEncoderID = 23;
-  public static int ClimbId = 24;
+  public static int ClimbId = 25;
 
   public static boolean ArmInvert = false;
   public static boolean ExtensionInvert = true;
