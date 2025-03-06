@@ -137,6 +137,11 @@ public class ExtendTalonFx implements ExtendIO {
   }
 
   @Override
+  public void updateConfig() {
+
+  }
+
+  @Override
   public void updateInputs(ExtendIOInputs inputs) {
     inputs.connected =
         BaseStatusSignal.refreshAll(

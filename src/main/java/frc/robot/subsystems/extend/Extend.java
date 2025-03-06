@@ -18,7 +18,7 @@ public class Extend extends SubsystemBase {
   }
 
   /** updates Extend values periodically */
-  public void extendPeriodic() {
+  public void periodic() {
     io.updateInputs(inputs);
     Logger.processInputs("Extend", inputs);
   }

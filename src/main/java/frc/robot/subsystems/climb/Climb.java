@@ -14,7 +14,7 @@ public class Climb extends SubsystemBase {
     this.io = io;
   }
 
-  public void climbPeriodic() {
+  public void periodic() {
     io.updateInputs(inputs);
     Logger.processInputs("Climb", inputs);
   }

@@ -22,4 +22,6 @@ public class PivotConstants {
   public static double kS = 0;
   public static double kV = 0;
   public static double kA = 0;
+
+  public static double kGExtendFactor = 1; //proportional increase to kG for each inch of extension, update
 }

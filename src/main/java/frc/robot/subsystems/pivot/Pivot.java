@@ -19,7 +19,7 @@ public class Pivot extends SubsystemBase {
   }
 
   /** updates arm values periodically */
-  public void pivotPeriodic() {
+  public void periodic() {
     io.updateInputs(inputs);
     Logger.processInputs("Pivot", inputs);
   }
@@ -44,5 +44,9 @@ public class Pivot extends SubsystemBase {
   public boolean atSetPoint() {
     return Math.abs(io.getAngle().getDegrees() - setpointAngleDegrees)
         < 1; // might need to add check for high velocity
+  }
+
+  public void updateConfig(double extendLengthInches) {
+    io.updateConfig(extendLengthInches);
   }
 }

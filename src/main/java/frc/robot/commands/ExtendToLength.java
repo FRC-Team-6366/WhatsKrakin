@@ -34,6 +34,7 @@ public class ExtendToLength extends Command {
   public void execute() {
     currentPivotRotations = pivot.getAngle().getRotations();
     extend.extendToLength(extendLengthInch, currentPivotRotations);
+    pivot.updateConfig(extend.getLength(currentPivotRotations));
   }
 
   // Called once the command ends or is interrupted.

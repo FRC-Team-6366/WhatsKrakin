@@ -7,6 +7,7 @@ package frc.robot.subsystems.pivot;
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.configs.TalonFXConfigurator;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.CANcoder;
@@ -137,7 +138,14 @@ public class PivotTalonFx implements PivotIO {
   }
 
   @Override
-  public void updateTune() {}
+  public void updateConfig(double extendLengthInches) {
+    TalonFXConfigurator configurator = _pivotMotorK.getConfigurator();
+    TalonFXConfiguration cfg = new TalonFXConfiguration();
+
+    cfg.Slot0.kG = PivotConstants.kG * extendLengthInches * PivotConstants.kGExtendFactor;
+
+    configurator.refresh(cfg);
+  }
 
   @Override
   public void updateInputs(PivotIOInputs inputs) {

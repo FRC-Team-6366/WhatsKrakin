@@ -36,7 +36,7 @@ public interface PivotIO {
     return new Rotation2d();
   }
 
-  public default void updateTune() {}
+  public default void updateConfig(double extendLengthInches) {}
 
   public default void updateInputs(PivotIOInputs inputs) {} // Updates inputs
 }
