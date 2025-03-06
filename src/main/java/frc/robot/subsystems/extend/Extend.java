@@ -4,6 +4,8 @@
 
 package frc.robot.subsystems.extend;
 
+import edu.wpi.first.math.filter.Debouncer;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.littletonrobotics.junction.Logger;
 
@@ -37,8 +39,8 @@ public class Extend extends SubsystemBase {
   }
 
   public boolean atSetPoint(double currentPivotRotations) {
-    return Math.abs(io.getLength(currentPivotRotations) - setPointLengthInches)
-        < 1; // might need to add check for high velocity
+    Debouncer setPointDebouncer = new Debouncer(0.5);
+    return setPointDebouncer.calculate(Math.abs(io.getLength(currentPivotRotations) - setPointLengthInches) < 1);
   }
 
   public void updateConfig() {

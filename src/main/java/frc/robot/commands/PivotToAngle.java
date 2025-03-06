@@ -18,15 +18,15 @@ public class PivotToAngle extends Command {
 
   /** Creates a new PivotToAngle. */
   public PivotToAngle(
-      Pivot param_pivot,
-      Extend param_extend,
-      double param_pivotAngleDegree,
-      boolean param_saftyExtend) {
+      Pivot pivot,
+      Extend extend,
+      double pivotAngleDegree,
+      boolean saftyExtend) {
     // Use addRequirements() here to declare subsystem dependencies.
-    pivot = param_pivot;
-    extend = param_extend;
-    pivotAngleDegree = param_pivotAngleDegree;
-    saftyExtend = param_saftyExtend;
+    pivot = this.pivot;
+    extend = this.extend;
+    pivotAngleDegree = this.pivotAngleDegree;
+    saftyExtend = this.saftyExtend;
     addRequirements(pivot, extend);
   }
 

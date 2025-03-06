@@ -12,8 +12,8 @@ public class ClimbUp extends Command {
 
   Climb climb;
   /** Creates a new ClimbUp. */
-  public ClimbUp(Climb param_climb) {
-    climb = param_climb;
+  public ClimbUp(Climb climb) {
+    climb = this.climb;
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(climb);
   }

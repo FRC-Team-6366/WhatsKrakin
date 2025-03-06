@@ -4,6 +4,7 @@
 
 package frc.robot.subsystems.pivot;
 
+import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.littletonrobotics.junction.Logger;
@@ -42,8 +43,9 @@ public class Pivot extends SubsystemBase {
   }
 
   public boolean atSetPoint() {
-    return Math.abs(io.getAngle().getDegrees() - setpointAngleDegrees)
-        < 1; // might need to add check for high velocity
+    Debouncer setPointDebouncer = new Debouncer(0.5);
+    return setPointDebouncer.calculate(Math.abs(io.getAngle().getDegrees() - setpointAngleDegrees)
+        < 1);
   }
 
   public void updateConfig(double extendLengthInches) {

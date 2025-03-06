@@ -37,7 +37,7 @@ public class ArmToSetPoint extends Command {
         pivot,
         extend,
         thetaDegrees,
-        saftyExtend); // pivot to angle first, safe pivot length included
+        saftyExtend); // pivot to angle first, safe pivot chosen in RobotContainer
     new ExtendToLength(pivot, extend, rInches); // extend to length, brake on pivot included
   }
 

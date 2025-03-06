@@ -16,10 +16,10 @@ public class ExtendToLength extends Command {
   double currentPivotRotations;
 
   /** Creates a new ExtendToLength. */
-  public ExtendToLength(Pivot param_pivot, Extend param_extend, double param_extendLengthInch) {
-    pivot = param_pivot;
-    extend = param_extend;
-    extendLengthInch = param_extendLengthInch;
+  public ExtendToLength(Pivot pivot, Extend extend, double extendLengthInch) {
+    pivot = this.pivot;
+    extend = this.extend;
+    extendLengthInch = this.extendLengthInch;
     addRequirements(extend);
   }
 
