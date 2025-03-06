@@ -34,31 +34,36 @@ public class VisionConstants {
   // (Not used by Limelight, configure in web UI instead)
   public static Transform3d robotToCamera0 =
       new Transform3d(
-          Units.inchesToMeters(13.78),
-          Units.inchesToMeters(-5.507),
-          Units.inchesToMeters(9.375),
-          new Rotation3d(0.0, 0.0, Units.degreesToRadians(20.0)));
+          Units.inchesToMeters(7.23),
+          Units.inchesToMeters(-6.184),
+          Units.inchesToMeters(14.734),
+          new Rotation3d(
+              Units.degreesToRadians(1), Units.degreesToRadians(11), Units.degreesToRadians(6)));
   public static Transform3d robotToCamera1 =
       new Transform3d(
-          Units.inchesToMeters(13.78),
-          Units.inchesToMeters(5.507),
-          Units.inchesToMeters(9.375),
-          new Rotation3d(0.0, 0.0, Units.degreesToRadians(-20.0)));
+          Units.inchesToMeters(7.23),
+          Units.inchesToMeters(6.184),
+          Units.inchesToMeters(14.734),
+          new Rotation3d(
+              Units.degreesToRadians(-1), Units.degreesToRadians(11), Units.degreesToRadians(-6)));
   public static Transform3d robotToCamera2 =
       new Transform3d(
-          0.4,
-          0.307,
-          0.33,
+          Units.inchesToMeters(2.55),
+          Units.inchesToMeters(-7.109),
+          Units.inchesToMeters(31.0),
           new Rotation3d(
-              Units.degreesToRadians(0), Units.degreesToRadians(45), Units.degreesToRadians(135)));
+              Units.degreesToRadians(12.6),
+              Units.degreesToRadians(-18),
+              Units.degreesToRadians(-135)));
   public static Transform3d robotToCamera3 =
       new Transform3d(
-          -0.4,
-          0.307,
-          0.33,
+          Units.inchesToMeters(2.55),
+          Units.inchesToMeters(7.109),
+          Units.inchesToMeters(31.0),
           new Rotation3d(
-              Units.degreesToRadians(0), Units.degreesToRadians(45), Units.degreesToRadians(-135)));
-
+              Units.degreesToRadians(-12.6),
+              Units.degreesToRadians(-18),
+              Units.degreesToRadians(135)));
   // Basic filtering thresholds
   public static double maxAmbiguity = 0.3;
   public static double maxZError = 0.75;
