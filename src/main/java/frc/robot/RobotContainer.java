@@ -202,7 +202,7 @@ public class RobotContainer {
     operatorController
         .a()
         .whileTrue(
-            new ArmToSetpoint(
+            new ArmToSetpointSequence(
                 pivot,
                 extend,
                 SetpointConstants.L2.pivotAngleDegrees(),
@@ -211,7 +211,7 @@ public class RobotContainer {
     operatorController
         .b()
         .whileTrue(
-            new ArmToSetpoint(
+            new ArmToSetpointSequence(
                 pivot,
                 extend,
                 SetpointConstants.L3.pivotAngleDegrees(),
@@ -220,7 +220,7 @@ public class RobotContainer {
     operatorController
         .y()
         .whileTrue(
-            new ArmToSetpoint(
+            new ArmToSetpointSequence(
                 pivot,
                 extend,
                 SetpointConstants.L4.pivotAngleDegrees(),
@@ -229,7 +229,7 @@ public class RobotContainer {
     operatorController
         .x()
         .whileTrue(
-            new ArmToSetpoint(
+            new ArmToSetpointSequence(
                 pivot,
                 extend,
                 SetpointConstants.CORAL.pivotAngleDegrees(),
