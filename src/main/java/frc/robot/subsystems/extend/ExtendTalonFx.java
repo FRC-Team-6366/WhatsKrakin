@@ -7,6 +7,7 @@ package frc.robot.subsystems.extend;
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.CANcoder;
@@ -27,17 +28,17 @@ public class ExtendTalonFx implements ExtendIO {
   private final TalonFX _extendMotorK;
   private final CANcoder _extendCANCoder;
 
-  private final StatusSignal<Angle> positionRotations;
-  private final StatusSignal<AngularVelocity> velocityRotationsPerSecond;
-  private final StatusSignal<Voltage> voltage;
-  private final StatusSignal<Current> supplyCurrentAmps;
-  private final StatusSignal<Current> torqueCurrentAmps;
-  private final StatusSignal<Temperature> tempCelsius;
-  private final StatusSignal<Angle> absolutePositionRotations;
-  private final StatusSignal<AngularVelocity> absoluteVelocityRotationsPerSecond;
+  private StatusSignal<Angle> positionRotations;
+  private StatusSignal<AngularVelocity> velocityRotationsPerSecond;
+  private StatusSignal<Voltage> voltage;
+  private StatusSignal<Current> supplyCurrentAmps;
+  private StatusSignal<Current> torqueCurrentAmps;
+  private StatusSignal<Temperature> tempCelsius;
+  private StatusSignal<Angle> absolutePositionRotations;
+  private StatusSignal<AngularVelocity> absoluteVelocityRotationsPerSecond;
 
-  private final PositionVoltage positonOut = new PositionVoltage(0).withSlot(0);
-  private final VoltageOut voltageOut = new VoltageOut(0.0).withEnableFOC(true).withUpdateFreqHz(0);
+  private MotionMagicVoltage positionVoltageRequest;
+  private VoltageOut voltageRequest;
 
   public ExtendTalonFx() {
     _extendMotorK = new TalonFX(ExtendConstants.extendTalonId);
@@ -73,16 +74,22 @@ public class ExtendTalonFx implements ExtendIO {
     cfg.Slot0.kS = ExtendConstants.kS;
     cfg.Slot0.kV = ExtendConstants.kV;
     cfg.Slot0.kA = ExtendConstants.kA;
+    cfg.Slot0.GravityType = GravityTypeValue.Elevator_Static;
+
     cfg.SoftwareLimitSwitch.ForwardSoftLimitEnable = ExtendConstants.extendForwardSoftLimitEnabled;
     cfg.SoftwareLimitSwitch.ForwardSoftLimitThreshold = ExtendConstants.extendForwardSoftLimit;
     cfg.SoftwareLimitSwitch.ReverseSoftLimitEnable = ExtendConstants.extendReverseSoftLimitEnabled;
     cfg.SoftwareLimitSwitch.ReverseSoftLimitThreshold = ExtendConstants.extendReverseSoftLimit;
-    cfg.Slot0.GravityType = GravityTypeValue.Elevator_Static;
+    
     cfg.Feedback.SensorToMechanismRatio = 1;
     cfg.Feedback.RotorToSensorRatio = ExtendConstants.extendGearRatio;
     cfg.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.FusedCANcoder;
     cfg.Feedback.FeedbackRemoteSensorID = _extendCANCoder.getDeviceID(); //Add this when adding an EnCoder gives it its ID
     
+    // Motion Magic
+    cfg.MotionMagic.MotionMagicAcceleration = ExtendConstants.motionMagicAcceleration;
+    cfg.MotionMagic.MotionMagicCruiseVelocity = ExtendConstants.MotionMagicCruiseVelocity;
+
     // voltage limits
     cfg.Voltage.PeakForwardVoltage = ExtendConstants.extendPeakVoltage;
     cfg.Voltage.PeakReverseVoltage = -ExtendConstants.extendPeakVoltage;
@@ -105,6 +112,9 @@ public class ExtendTalonFx implements ExtendIO {
     _extendCANCoder.optimizeBusUtilization(0.0, 1.0);
 
     _extendMotorK.getConfigurator().apply(cfg);
+
+    positionVoltageRequest = new MotionMagicVoltage(0.0);
+    voltageRequest = new VoltageOut(0.0);
   }
 
   @Override
@@ -114,9 +124,9 @@ public class ExtendTalonFx implements ExtendIO {
 
   @Override
   public void runVolts(double volts) {
-    _extendMotorK.setControl(voltageOut.withOutput(volts));
+    _extendMotorK.setControl(voltageRequest.withOutput(volts));
   }
-
+  
   @Override
   public void extendToLength(double extendLengthInches, double currentPivotRotations) {
     double targetExtendRotations =
@@ -124,7 +134,7 @@ public class ExtendTalonFx implements ExtendIO {
                 - (currentPivotRotations * ExtendConstants.spoolCircumferenceInches)
                 - ExtendConstants.extendOffsetInchAtZeroDegrees)
             / (ExtendConstants.spoolCircumferenceInches);
-    _extendMotorK.setControl(positonOut.withPosition(targetExtendRotations).withSlot(0));
+    _extendMotorK.setControl(positionVoltageRequest.withPosition(targetExtendRotations).withSlot(0));
   }
 
   @Override
