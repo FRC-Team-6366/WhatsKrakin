@@ -59,7 +59,7 @@ public class VisionConstants {
       new Transform3d(
           Units.inchesToMeters(2.55),
           Units.inchesToMeters(7.109),
-          Units.inchesToMeters(31.0),
+          Units.inchesToMeters(33.0),
           new Rotation3d(
               Units.degreesToRadians(-12.6),
               Units.degreesToRadians(-18),
