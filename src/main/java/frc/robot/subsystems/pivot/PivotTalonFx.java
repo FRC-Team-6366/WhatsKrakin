@@ -169,5 +169,4 @@ public class PivotTalonFx implements PivotIO {
     inputs.torqueCurrentAmps = torqueCurrentAmps.getValueAsDouble();
     inputs.tempCelsius = tempCelsius.getValueAsDouble();
   }
-  // TODO add Input logging
 }

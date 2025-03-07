@@ -159,5 +159,4 @@ public class ExtendTalonFx implements ExtendIO {
     inputs.torqueCurrentAmps = torqueCurrentAmps.getValueAsDouble();
     inputs.tempCelsius = tempCelsius.getValueAsDouble();
   }
-  // TODO add input loggging
 }
