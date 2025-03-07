@@ -151,7 +151,7 @@ public class SuperStructure {
       // boolean DrLb,
       // boolean DrA
       ) {
-    if (DrRb && climb.getClimb().getRotations() > -92) {
+    if (DrRb && climb.getClimb().getRotations() > -80) {
       // go to set position in constants or prepares for climb
       climb.runVolts(-12);
 
