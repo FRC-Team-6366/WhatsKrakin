@@ -26,7 +26,7 @@ public class ExtendConstants {
   public static double kV = 0;
   public static double kA = 0;
 
-  //Motion Magic
+  // Motion Magic
   public static double motionMagicAcceleration = 0;
   public static double MotionMagicCruiseVelocity = 0;
 }

@@ -8,7 +8,6 @@ import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
-import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -126,7 +125,7 @@ public class ExtendTalonFx implements ExtendIO {
   public void runVolts(double volts) {
     _extendMotorK.setControl(voltageRequest.withOutput(volts));
   }
-  
+
   @Override
   public void extendToLength(double extendLengthInches, double currentPivotRotations) {
     double targetExtendRotations =
@@ -134,7 +133,8 @@ public class ExtendTalonFx implements ExtendIO {
                 - (currentPivotRotations * ExtendConstants.spoolCircumferenceInches)
                 - ExtendConstants.extendOffsetInchAtZeroDegrees)
             / (ExtendConstants.spoolCircumferenceInches);
-    _extendMotorK.setControl(positionVoltageRequest.withPosition(targetExtendRotations).withSlot(0));
+    _extendMotorK.setControl(
+        positionVoltageRequest.withPosition(targetExtendRotations).withSlot(0));
   }
 
   @Override
