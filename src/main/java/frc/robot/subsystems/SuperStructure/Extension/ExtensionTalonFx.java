@@ -58,7 +58,7 @@ public class ExtensionTalonFx implements ExtensionIO {
     // spotless:off
     cfg.MotorOutput
         .withInverted(SuperStructureConstants.ExtensionInvert ? InvertedValue.Clockwise_Positive : InvertedValue.CounterClockwise_Positive)
-        .withNeutralMode(NeutralModeValue.Coast);
+        .withNeutralMode(NeutralModeValue.Brake);
     cfg.CurrentLimits
         .withSupplyCurrentLimitEnable(true)
         .withSupplyCurrentLimit(40);
