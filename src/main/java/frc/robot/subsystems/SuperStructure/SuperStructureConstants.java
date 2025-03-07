@@ -37,7 +37,7 @@ public final class SuperStructureConstants {
 
   public static double anglePeakVoltage = 6; // 4
   public static double extensionPeakVoltage = 1; // 6
-  public static double climbPeakVoltage = 6;
+  public static double climbPeakVoltage = 8;
 
   public static double HomeAngle = -72; // -73.5
   public static double HomeExtend = 0; // 21.5
