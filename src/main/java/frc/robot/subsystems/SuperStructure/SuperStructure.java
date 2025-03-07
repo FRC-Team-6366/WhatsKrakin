@@ -157,7 +157,7 @@ public class SuperStructure {
 
       // sequence holder for climb
       // climbPose = otherSequence.PrepareClimb;
-    } else if (DrLb && climb.getClimb().getRotations() > -150) {
+    } else if (DrLb && climb.getClimb().getRotations() > -140) {
       // go to set position in constants and does climb
       // climbAngle = SuperStructureConstants.doClimb;
       climb.runVolts(-12);
