@@ -236,6 +236,7 @@ public class RobotContainer {
                 SetpointConstants.CORAL.extendLengthInches(),
                 true));
     operatorController.rightTrigger(0.1).whileTrue(new ScoreCoral(pivot, extend));
+    operatorController.leftTrigger(0.1).onTrue(new ArmToSetpointSequence(pivot, extend, SetpointConstants.HOME.pivotAngleDegrees(), SetpointConstants.HOME.extendLengthInches(), true));
   }
 
   private void configurePoleBindings() {}

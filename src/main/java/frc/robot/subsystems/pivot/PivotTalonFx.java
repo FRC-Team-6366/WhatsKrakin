@@ -8,6 +8,7 @@ import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfigurator;
+import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.CANcoder;
@@ -30,17 +31,17 @@ public class PivotTalonFx implements PivotIO {
   private final TalonFX _pivotMotorK;
   private final CANcoder _pivotCANCoder;
 
-  private final StatusSignal<Angle> positionRotations;
-  private final StatusSignal<AngularVelocity> velocityRotationsPerSecond;
-  private final StatusSignal<Angle> absolutePositionRotations;
-  private final StatusSignal<AngularVelocity> absoluteVelocityRotationsPerSecond;
-  private final StatusSignal<Voltage> voltage;
-  private final StatusSignal<Current> supplyCurrentAmps;
-  private final StatusSignal<Current> torqueCurrentAmps;
-  private final StatusSignal<Temperature> tempCelsius;
+  private StatusSignal<Angle> positionRotations;
+  private StatusSignal<AngularVelocity> velocityRotationsPerSecond;
+  private StatusSignal<Angle> absolutePositionRotations;
+  private StatusSignal<AngularVelocity> absoluteVelocityRotationsPerSecond;
+  private StatusSignal<Voltage> voltage;
+  private StatusSignal<Current> supplyCurrentAmps;
+  private StatusSignal<Current> torqueCurrentAmps;
+  private StatusSignal<Temperature> tempCelsius;
 
-  private final PositionVoltage positionOut = new PositionVoltage(0).withSlot(0);
-  private final VoltageOut voltageOut = new VoltageOut(0.0).withEnableFOC(true).withUpdateFreqHz(0);
+  private MotionMagicVoltage positionVoltageRequest;
+  private VoltageOut voltageRequest;
 
   private double setpointAngleDegrees;
 
@@ -113,6 +114,9 @@ public class PivotTalonFx implements PivotIO {
     _pivotCANCoder.optimizeBusUtilization(0.0, 1.0);
 
     _pivotMotorK.getConfigurator().apply(cfg);
+
+    positionVoltageRequest = new MotionMagicVoltage(0.0);
+    voltageRequest = new VoltageOut(0.0);
   }
 
   @Override
@@ -122,13 +126,13 @@ public class PivotTalonFx implements PivotIO {
 
   @Override
   public void runVolts(double volts) {
-    _pivotMotorK.setControl(voltageOut.withOutput(volts));
+    _pivotMotorK.setControl(voltageRequest.withOutput(volts));
   }
 
   @Override
   public void pivotToAngle(double angleDegrees) {
     _pivotMotorK.setControl(
-        positionOut.withPosition(Units.degreesToRotations(angleDegrees)).withSlot(0));
+        positionVoltageRequest.withPosition(Units.degreesToRotations(angleDegrees)).withSlot(0));
     setpointAngleDegrees = angleDegrees;
   }
 
