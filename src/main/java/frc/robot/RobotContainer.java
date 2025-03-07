@@ -27,6 +27,7 @@ import frc.robot.commands.*;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.climb.Climb;
 import frc.robot.subsystems.climb.ClimbConstants;
+import frc.robot.subsystems.climb.ClimbSim;
 import frc.robot.subsystems.climb.ClimbTalonFX;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
@@ -35,8 +36,10 @@ import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
 import frc.robot.subsystems.extend.Extend;
+import frc.robot.subsystems.extend.ExtendSim;
 import frc.robot.subsystems.extend.ExtendTalonFx;
 import frc.robot.subsystems.pivot.Pivot;
+import frc.robot.subsystems.pivot.PivotSim;
 import frc.robot.subsystems.pivot.PivotTalonFx;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIO;
@@ -133,6 +136,9 @@ public class RobotContainer {
                 new ModuleIO() {},
                 new ModuleIO() {});
         vision = new Vision(drive::addVisionMeasurement, new VisionIO() {}, new VisionIO() {});
+        pivot = new Pivot(new PivotSim());
+        extend = new Extend(new ExtendSim());
+        climb = new Climb(new ClimbSim());
         break;
     }
 
