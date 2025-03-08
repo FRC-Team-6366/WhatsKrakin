@@ -72,6 +72,7 @@ public final class SuperStructureConstants {
 
   public static double armCruiseVelocity = 10;
   public static double armCruiseAcceleration = 5;
+  
   // closed loop
   public static double AngleP = 0; //
   public static double AngleI = 0;
