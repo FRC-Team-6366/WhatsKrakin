@@ -19,5 +19,6 @@ public class ArmToSetpointSequence extends SequentialCommandGroup {
     addCommands(
         new PivotToAngle(pivot, extend, thetaDegrees, saftyExtend),
         new ExtendToLength(pivot, extend, rInches));
+    addRequirements(pivot, extend);
   }
 }

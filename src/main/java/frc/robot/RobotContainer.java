@@ -16,11 +16,14 @@ package frc.robot;
 import static frc.robot.subsystems.vision.VisionConstants.*;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
+
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.*;
@@ -89,10 +92,9 @@ public class RobotContainer {
             new Vision(
                 drive::addVisionMeasurement,
                 new VisionIOPhotonVision(camera0Name, robotToCamera0),
-                new VisionIOPhotonVision(camera1Name, robotToCamera1)
-                // new VisionIOPhotonVision(camera2Name, robotToCamera2),
-                // new VisionIOPhotonVision(camera3Name, robotToCamera3)
-                );
+                new VisionIOPhotonVision(camera1Name, robotToCamera1),
+                new VisionIOPhotonVision(camera2Name, robotToCamera2),
+                new VisionIOPhotonVision(camera3Name, robotToCamera3));
         pivot = new Pivot(new PivotTalonFx());
         extend = new Extend(new ExtendTalonFx());
         climb = new Climb(new ClimbTalonFX());
@@ -152,8 +154,14 @@ public class RobotContainer {
     autoChooser.addOption(
         "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
 
+        configureNamedCommands();
     // Configure the button bindings
     configureButtonBindings();
+  }
+
+  private void configureNamedCommands() {
+    NamedCommands.registerCommand("Prep", Commands.none());
+    NamedCommands.registerCommand("L4", Commands.none());
   }
 
   /**
@@ -185,7 +193,6 @@ public class RobotContainer {
     // Switch to X pattern when X button is pressed
     driverController.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
 
-    // Reset gyro to 0° when B button is pressed
     driverController
         .b()
         .onTrue(
@@ -211,6 +218,12 @@ public class RobotContainer {
                 SetpointConstants.L3.pivotAngleDegrees(),
                 SetpointConstants.L3.extendLengthInches(),
                 true));
+
+    operatorController.b().whileTrue(
+        new SequentialCommandGroup(
+            pivot.doSomethingidk()
+        )
+    )
     operatorController
         .y()
         .whileTrue(
@@ -241,7 +254,7 @@ public class RobotContainer {
                 true));
   }
 
-  private void configurePoleBindings() {}
+  // private void configurePoleBindings() {}
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
