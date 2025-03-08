@@ -69,7 +69,8 @@ public class ArmSim implements ArmIO {
     arm.update(0.02);
     inputs.connected = true;
     inputs.positionAngle = getAngle().getDegrees();
-    inputs.velocityDegPerSec = Units.radiansPerSecondToRotationsPerMinute(arm.getVelocityRadPerSec());
+    inputs.velocityDegPerSec =
+        Units.radiansPerSecondToRotationsPerMinute(arm.getVelocityRadPerSec());
 
     inputs.appliedVoltage = arm.getInput(0);
     inputs.supplyCurrentAmps = arm.getCurrentDrawAmps();

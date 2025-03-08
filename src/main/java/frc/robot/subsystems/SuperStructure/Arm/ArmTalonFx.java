@@ -6,13 +6,11 @@ package frc.robot.subsystems.SuperStructure.Arm;
 
 import static edu.wpi.first.units.Units.DegreesPerSecond;
 import static edu.wpi.first.units.Units.DegreesPerSecondPerSecond;
-import static edu.wpi.first.units.Units.RotationsPerSecond;
 
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
-import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -20,7 +18,6 @@ import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Angle;
@@ -35,7 +32,6 @@ public class ArmTalonFx implements ArmIO {
 
   private final TalonFX _angleMotorK;
   private final CANcoder _angleCANcoder;
-  private double setPointAngleRotations = 0;
 
   private final StatusSignal<Angle> absolutePosition;
   private final StatusSignal<AngularVelocity> absoluteVelocity;
@@ -46,7 +42,7 @@ public class ArmTalonFx implements ArmIO {
   private final StatusSignal<Current> torqueCurrentAmps;
   private final StatusSignal<Temperature> tempCelsius;
 
- private final MotionMagicVoltage mmVolts = new MotionMagicVoltage(0).withSlot(0);
+  private final MotionMagicVoltage mmVolts = new MotionMagicVoltage(0).withSlot(0);
 
   private final VoltageOut voltageOut = new VoltageOut(0.0).withEnableFOC(true).withUpdateFreqHz(0);
 
@@ -69,7 +65,7 @@ public class ArmTalonFx implements ArmIO {
         .withNeutralMode(NeutralModeValue.Brake);
     cfg.CurrentLimits
         .withSupplyCurrentLimitEnable(true)
-        .withSupplyCurrentLimit(40);
+        .withSupplyCurrentLimit(50);
     cfg.ClosedLoopGeneral.ContinuousWrap = true; //true = knows when it reaches 360, it is 0
     cfg.ClosedLoopRamps.VoltageClosedLoopRampPeriod = 0.1;
     cfg.MotionMagic
@@ -87,13 +83,13 @@ public class ArmTalonFx implements ArmIO {
     cfg.SoftwareLimitSwitch.ForwardSoftLimitThreshold = SuperStructureConstants.angleSoftLimitHigh;
     cfg.SoftwareLimitSwitch.ReverseSoftLimitEnable = false;
     cfg.SoftwareLimitSwitch.ReverseSoftLimitThreshold = SuperStructureConstants.angleSoftLimitLow;
-    cfg.Feedback.SensorToMechanismRatio = 1;
-    cfg.Feedback.RotorToSensorRatio = SuperStructureConstants.angleGearRatio;
-    cfg.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.FusedCANcoder;
+    cfg.Feedback.SensorToMechanismRatio = SuperStructureConstants.angleGearRatio;
+    // cfg.Feedback.RotorToSensorRatio = 1;
+    cfg.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANcoder;
     cfg.Feedback.FeedbackRemoteSensorID = _angleCANcoder.getDeviceID(); //connecting CAN to motor
     // voltage limits
-    cfg.Voltage.PeakForwardVoltage = SuperStructureConstants.anglePeakVoltage;
-    cfg.Voltage.PeakReverseVoltage = -SuperStructureConstants.anglePeakVoltage;
+    // cfg.Voltage.PeakForwardVoltage = SuperStructureConstants.anglePeakVoltage;
+    // cfg.Voltage.PeakReverseVoltage = -SuperStructureConstants.anglePeakVoltage;
     // spotless:on
 
     BaseStatusSignal.setUpdateFrequencyForAll(
@@ -109,11 +105,13 @@ public class ArmTalonFx implements ArmIO {
     _angleMotorK.optimizeBusUtilization(0.0, 1.0);
     _angleCANcoder.optimizeBusUtilization(0.0, 1.0);
 
+    _angleMotorK.setPosition(_angleCANcoder.getAbsolutePosition().getValueAsDouble());
     _angleMotorK.getConfigurator().apply(cfg);
   }
 
   @Override
   public void setAngle(double angle) {
+    double setPointAngleRotations;
     if ((angle * 360 < SuperStructureConstants.PrepAngle
             && _angleMotorK.getPosition().getValueAsDouble() * 360
                 > SuperStructureConstants.PrepAngle + 2)
@@ -129,8 +127,7 @@ public class ArmTalonFx implements ArmIO {
     } else {
       setPointAngleRotations = angle;
     }
-    _angleMotorK.setControl(
-        mmVolts.withPosition(setPointAngleRotations));
+    _angleMotorK.setControl(mmVolts.withPosition(setPointAngleRotations));
   }
 
   @Override
@@ -161,9 +158,10 @@ public class ArmTalonFx implements ArmIO {
                 absoluteVelocity)
             .isOK();
 
-    inputs.positionAngle = Units.rotationsToDegrees(position.getValueAsDouble());
+    inputs.positionAngle =
+        Units.rotationsToDegrees(_angleCANcoder.getAbsolutePosition().getValueAsDouble());
     inputs.velocityDegPerSec = Units.rotationsToDegrees(velocity.getValueAsDouble());
-    inputs.goToAngleDegrees = Units.rotationsToDegrees(setPointAngleRotations);
+    inputs.goToAngleDegrees = Units.rotationsToDegrees(mmVolts.Position);
 
     inputs.appliedVoltage = voltage.getValueAsDouble();
     inputs.supplyCurrentAmps = supplyCurrentAmps.getValueAsDouble();

@@ -39,7 +39,7 @@ public final class SuperStructureConstants {
   public static double extensionPeakVoltage = 1; // 6
   public static double climbPeakVoltage = 6;
 
-  public static double HomeAngle = -72; // -73.5
+  public static double HomeAngle = 0; // -72.5
   public static double HomeExtend = 0; // 21.5
   public static double HomeClimb = 0; // Maybe add (Might need to change)
 
@@ -70,14 +70,14 @@ public final class SuperStructureConstants {
   public static double scoreExtendDrop = 0;
   public static double doClimb = 0;
 
-  public static double armCruiseVelocity = 5;
+  public static double armCruiseVelocity = 10;
   public static double armCruiseAcceleration = 5;
   // closed loop
   public static double AngleP = 0; //
   public static double AngleI = 0;
   public static double AngleD = 0; // 3
   public static double AngleS = 1;
-  public static double AngleV = 0; // 1.4
+  public static double AngleV = 0.5; // 1.4
   public static double AngleA = 0;
   public static double AngleG = 0.07; // 1.2
   public static double angleSoftLimitLow = 0; // -90

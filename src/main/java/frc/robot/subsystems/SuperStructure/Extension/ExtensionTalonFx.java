@@ -4,18 +4,13 @@
 
 package frc.robot.subsystems.SuperStructure.Extension;
 
-import static edu.wpi.first.units.Units.DegreesPerSecond;
-import static edu.wpi.first.units.Units.DegreesPerSecondPerSecond;
-import static edu.wpi.first.units.Units.Rotations;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
 
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.controls.MotionMagicVelocityVoltage;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
-import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -46,7 +41,7 @@ public class ExtensionTalonFx implements ExtensionIO {
   private final StatusSignal<Angle> absolutePosition;
   private final StatusSignal<AngularVelocity> absoluteVelocity;
 
-  private final MotionMagicVoltage mmVolts =  new MotionMagicVoltage(0).withSlot(0);
+  private final MotionMagicVoltage mmVolts = new MotionMagicVoltage(0).withSlot(0);
   private final VoltageOut voltageOut = new VoltageOut(0.0).withEnableFOC(true).withUpdateFreqHz(0);
 
   public ExtensionTalonFx() {
@@ -128,7 +123,8 @@ public class ExtensionTalonFx implements ExtensionIO {
 
   @Override
   public double getExtend() {
-    return _extendMotorK.getPosition().getValueAsDouble() * SuperStructureConstants.extendRotationsToInches;
+    return _extendMotorK.getPosition().getValueAsDouble()
+        * SuperStructureConstants.extendRotationsToInches;
   }
 
   @Override
@@ -145,7 +141,8 @@ public class ExtensionTalonFx implements ExtensionIO {
                 absoluteVelocity)
             .isOK();
 
-    inputs.positionInch = position.getValueAsDouble() * SuperStructureConstants.extendRotationsToInches;
+    inputs.positionInch =
+        position.getValueAsDouble() * SuperStructureConstants.extendRotationsToInches;
     inputs.positionExtensionRotation = position.getValueAsDouble();
     inputs.velocityRPM = Units.radiansPerSecondToRotationsPerMinute(velocity.getValueAsDouble());
 
