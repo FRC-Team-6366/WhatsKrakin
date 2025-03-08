@@ -36,7 +36,7 @@ public class SuperStructure {
     this.extension = extension;
     this.climb = climb;
 
-    climbPose = otherSequence.ClimbHome;
+    climbPose = otherSequence.ClimbDOne;
     lastPose = sequence.Home; // Makes it go to home no matter the last pose
     armAngle = 0; // logs the arm angle
     extendDistance = 0; // logs the extend distance
@@ -153,17 +153,20 @@ public class SuperStructure {
       ) {
     if (DrRb && climb.getClimb().getRotations() > -70) {
       // go to set position in constants or prepares for climb
+      climbPose = otherSequence.PrepareClimb;
       climb.runVolts(-12);
-
       // sequence holder for climb
-      // climbPose = otherSequence.PrepareClimb;
+     
     } else if (DrLb && climb.getClimb().getRotations() > -177) {
       // go to set position in constants and does climb
       // climbAngle = SuperStructureConstants.doClimb;
+     climbPose = otherSequence.Climbing;
       climb.runVolts(-12);
-
+      if (climb.getClimb().getRotations() < -170){
+        climb.runVolts(0);
+        climbPose = otherSequence.ClimbDOne;
+       }
       // sequence holder for climb
-      // climbPose = otherSequence.Climbing;
     }
     // } else if (DrA) {
 
