@@ -163,9 +163,9 @@ public class SuperStructure {
     //   // climbAngle = SuperStructureConstants.doClimb;
     //   climb.runVolts(-12);
 
-      // sequence holder for climb
-      // climbPose = otherSequence.Climbing;
-    }
+    // sequence holder for climb
+    // climbPose = otherSequence.Climbing;
+    // }
     // } else if (DrA) {
 
     //   climbAngle = SuperStructureConstants.HomeClimb;
