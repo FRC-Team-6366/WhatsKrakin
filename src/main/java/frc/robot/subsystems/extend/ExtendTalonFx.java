@@ -90,8 +90,8 @@ public class ExtendTalonFx implements ExtendIO {
     cfg.MotionMagic.MotionMagicCruiseVelocity = ExtendConstants.MotionMagicCruiseVelocity;
 
     // voltage limits
-    cfg.Voltage.PeakForwardVoltage = ExtendConstants.extendPeakVoltage;
-    cfg.Voltage.PeakReverseVoltage = -ExtendConstants.extendPeakVoltage;
+    // cfg.Voltage.PeakForwardVoltage = ExtendConstants.extendPeakVoltage;
+    // cfg.Voltage.PeakReverseVoltage = -ExtendConstants.extendPeakVoltage;
 
     _extendMotorK.setPosition(_extendCANCoder.getAbsolutePosition().getValueAsDouble());
     // spotless:on

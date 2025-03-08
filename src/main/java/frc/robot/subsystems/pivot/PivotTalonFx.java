@@ -23,6 +23,7 @@ import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Temperature;
 import edu.wpi.first.units.measure.Voltage;
+import frc.robot.subsystems.extend.ExtendConstants;
 
 /** Add your docs here. */
 public class PivotTalonFx implements PivotIO {
@@ -92,8 +93,12 @@ public class PivotTalonFx implements PivotIO {
     cfg.Feedback.FeedbackRemoteSensorID = _pivotCANCoder.getDeviceID(); //connecting CAN to motor
     
     // voltage limits
-    cfg.Voltage.PeakForwardVoltage = PivotConstants.pivotPeakVoltage;
-    cfg.Voltage.PeakReverseVoltage = -PivotConstants.pivotPeakVoltage;
+    // cfg.Voltage.PeakForwardVoltage = PivotConstants.pivotPeakVoltage;
+    // cfg.Voltage.PeakReverseVoltage = -PivotConstants.pivotPeakVoltage;
+
+    // Motion Magic
+    cfg.MotionMagic.MotionMagicAcceleration = PivotConstants.motionMagicAcceleration;
+    cfg.MotionMagic.MotionMagicCruiseVelocity = PivotConstants.MotionMagicCruiseVelocity;
 
     _pivotMotorK.setPosition(_pivotCANCoder.getAbsolutePosition().getValueAsDouble());
     // spotless:on
