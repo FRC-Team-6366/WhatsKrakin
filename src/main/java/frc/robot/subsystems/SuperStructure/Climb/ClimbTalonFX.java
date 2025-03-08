@@ -47,8 +47,8 @@ public class ClimbTalonFX implements ClimbIO {
             SuperStructureConstants.ClimbInvert
                 ? InvertedValue.Clockwise_Positive
                 : InvertedValue.CounterClockwise_Positive)
-        .withNeutralMode(NeutralModeValue.Coast);
-    cfg.CurrentLimits.withStatorCurrentLimitEnable(true).withSupplyCurrentLimit(40);
+        .withNeutralMode(NeutralModeValue.Brake);
+    cfg.CurrentLimits.withStatorCurrentLimitEnable(true).withSupplyCurrentLimit(80);
     cfg.ClosedLoopGeneral.ContinuousWrap = false;
     cfg.ClosedLoopRamps.VoltageClosedLoopRampPeriod = 0.1;
     // cfg.Slot0.kP = SuperStructureConstants.ClimbP;
