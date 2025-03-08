@@ -151,21 +151,21 @@ public class SuperStructure {
       // boolean DrLb,
       // boolean DrA
       ) {
-    if (DrRb) {
+    if (DrRb && climb.getClimb().getRotations() > -90) {
       // go to set position in constants or prepares for climb
       climb.runVolts(-12);
 
       // sequence holder for climb
       // climbPose = otherSequence.PrepareClimb;
-    }
-    // } else if (DrLb && climb.getClimb().getRotations() > -135) {
+    // }
+     } else if (DrLb && climb.getClimb().getRotations() > -165) {
     //   // go to set position in constants and does climb
     //   // climbAngle = SuperStructureConstants.doClimb;
-    //   climb.runVolts(-12);
+       climb.runVolts(-12);
 
     // sequence holder for climb
     // climbPose = otherSequence.Climbing;
-    // }
+     }
     // } else if (DrA) {
 
     //   climbAngle = SuperStructureConstants.HomeClimb;
