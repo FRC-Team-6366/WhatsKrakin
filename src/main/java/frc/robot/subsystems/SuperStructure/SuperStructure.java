@@ -162,7 +162,7 @@ public class SuperStructure {
       // climbAngle = SuperStructureConstants.doClimb;
      climbPose = otherSequence.Climbing;
       climb.runVolts(-12);
-      if (climb.getClimb().getRotations() < -170){
+      if (climb.getClimb().getRotations() < -177){
         climb.runVolts(0);
         climbPose = otherSequence.ClimbDOne;
        }
