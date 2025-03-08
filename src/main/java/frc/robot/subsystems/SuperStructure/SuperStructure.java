@@ -157,7 +157,7 @@ public class SuperStructure {
 
       // sequence holder for climb
       // climbPose = otherSequence.PrepareClimb;
-    } else if (DrLb && climb.getClimb().getRotations() > -160) {
+    } else if (DrLb && climb.getClimb().getRotations() > -177) {
       // go to set position in constants and does climb
       // climbAngle = SuperStructureConstants.doClimb;
       climb.runVolts(-12);
@@ -173,143 +173,143 @@ public class SuperStructure {
     //   climbPose = otherSequence.ClimbHome;
     // }
 
-  //   if ((opLb && opRb)) { // force end sequnce
-  //     // sets position using constants
-  //     armAngle = SuperStructureConstants.HomeAngle;
-  //     extendDistance = SuperStructureConstants.HomeExtend;
-  //     // sequence holder
-  //     lastPose = sequence.Home;
+    if ((opLb && opRb)) { // force end sequnce
+      // sets position using constants
+      armAngle = SuperStructureConstants.HomeAngle;
+      extendDistance = SuperStructureConstants.HomeExtend;
+      // sequence holder
+      lastPose = sequence.Home;
 
-  //   } else if (lastPose == sequence.Prep
-  //       && arm.atTarget()
-  //       && drRt) { // move from preped to score to score angle
-  //     // sets position using constants
-  //     extendDistance -= SuperStructureConstants.scoreExtendDrop;
-  //     armAngle -= SuperStructureConstants.scoreAngleDrop;
-  //     // sequence holder
-  //     lastPose = sequence.Score;
+    } else if (lastPose == sequence.Prep
+        && arm.atTarget()
+        && drRt) { // move from preped to score to score angle
+      // sets position using constants
+      extendDistance -= SuperStructureConstants.scoreExtendDrop;
+      armAngle -= SuperStructureConstants.scoreAngleDrop;
+      // sequence holder
+      lastPose = sequence.Score;
 
-  //   } else if (lastPose == sequence.Score
-  //       && arm.atTarget()
-  //       && !drRt) { // retract extension after score
-  //     // sets position using constants
-  //     extendDistance = SuperStructureConstants.HomeExtend;
-  //     lastPose = sequence.Retract;
+    } else if (lastPose == sequence.Score
+        && arm.atTarget()
+        && !drRt) { // retract extension after score
+      // sets position using constants
+      extendDistance = SuperStructureConstants.HomeExtend;
+      lastPose = sequence.Retract;
 
-  //   } else if (lastPose == sequence.Retract
-  //       && arm.atTarget()
-  //       && extension.atExtension()) { // once extension retracted return arm to home
-  //     // sets position using constants
-  //     extendDistance = SuperStructureConstants.HomeExtend;
-  //     armAngle = SuperStructureConstants.HomeAngle;
-  //     // sequence holder
-  //     lastPose = sequence.Home;
+    } else if (lastPose == sequence.Retract
+        && arm.atTarget()
+        && extension.atExtension()) { // once extension retracted return arm to home
+      // sets position using constants
+      extendDistance = SuperStructureConstants.HomeExtend;
+      armAngle = SuperStructureConstants.HomeAngle;
+      // sequence holder
+      lastPose = sequence.Home;
 
-  //   }
-  //   // Go to prep pose (should be less than 180 from stow but within 90 of final target)
-  //   else if (opA) { // begin L1 sequence
-  //     // sets position using constants
-  //     armAngle = SuperStructureConstants.PrepAngle;
-  //     extendDistance = SuperStructureConstants.PrepExtend;
-  //     // sequence holder
-  //     lastPose = sequence.L1;
+    }
+    // Go to prep pose (should be less than 180 from stow but within 90 of final target)
+    else if (opA) { // begin L1 sequence
+      // sets position using constants
+      armAngle = SuperStructureConstants.PrepAngle;
+      extendDistance = SuperStructureConstants.PrepExtend;
+      // sequence holder
+      lastPose = sequence.L1;
 
-  //   } else if (opX) { // begin l2 sequence
-  //     // sets position using constants
-  //     armAngle = SuperStructureConstants.PrepAngle;
-  //     extendDistance = SuperStructureConstants.PrepExtend;
-  //     // sequence holder
-  //     lastPose = sequence.L2;
+    } else if (opX) { // begin l2 sequence
+      // sets position using constants
+      armAngle = SuperStructureConstants.PrepAngle;
+      extendDistance = SuperStructureConstants.PrepExtend;
+      // sequence holder
+      lastPose = sequence.L2;
 
-  //   } else if (opB) { // begin l3 sequence
-  //     // sets position using constants
-  //     armAngle = SuperStructureConstants.PrepAngle;
-  //     extendDistance = SuperStructureConstants.PrepExtend;
-  //     // sequence holder
-  //     lastPose = sequence.L3;
+    } else if (opB) { // begin l3 sequence
+      // sets position using constants
+      armAngle = SuperStructureConstants.PrepAngle;
+      extendDistance = SuperStructureConstants.PrepExtend;
+      // sequence holder
+      lastPose = sequence.L3;
 
-  //   } else if (opY) { // begin l4 sequence
-  //     // sets position using constants
-  //     armAngle = SuperStructureConstants.PrepAngle;
-  //     extendDistance = SuperStructureConstants.PrepExtend;
-  //     // sequence holder
-  //     lastPose = sequence.L4;
+    } else if (opY) { // begin l4 sequence
+      // sets position using constants
+      armAngle = SuperStructureConstants.PrepAngle;
+      extendDistance = SuperStructureConstants.PrepExtend;
+      // sequence holder
+      lastPose = sequence.L4;
 
-  //   } else if (drLt > 0.75) { // grab the game piece from the ramp
-  //     // sets position using constants
-  //     armAngle = SuperStructureConstants.CollectAngle;
-  //     extendDistance = SuperStructureConstants.CollectExtend;
-  //     // sequence holder
-  //     lastPose = sequence.Home;
+    } else if (drLt > 0.75) { // grab the game piece from the ramp
+      // sets position using constants
+      armAngle = SuperStructureConstants.CollectAngle;
+      extendDistance = SuperStructureConstants.CollectExtend;
+      // sequence holder
+      lastPose = sequence.Home;
 
-  //   } else if (drLt > 0.1) { // put arm in position to grab from ramp
-  //     // sets position using constants
-  //     armAngle = SuperStructureConstants.CollectPrepAngle;
-  //     extendDistance = SuperStructureConstants.CollectPrepExtend;
-  //     // sequence holder
-  //     lastPose = sequence.Home;
+    } else if (drLt > 0.1) { // put arm in position to grab from ramp
+      // sets position using constants
+      armAngle = SuperStructureConstants.CollectPrepAngle;
+      extendDistance = SuperStructureConstants.CollectPrepExtend;
+      // sequence holder
+      lastPose = sequence.Home;
 
-  //   }
-  //   // actuall scoring pose to move to after releasing
-  //   else if (!opA
-  //       && lastPose == sequence.L1
-  //       && arm.atTarget()) { // move to final location to score l2
-  //     // sets position using constants
-  //     armAngle = SuperStructureConstants.L1Angle;
-  //     extendDistance = SuperStructureConstants.L1Extend;
-  //     // sequence holder
-  //     lastPose = sequence.Prep;
+    }
+    // actuall scoring pose to move to after releasing
+    else if (!opA
+        && lastPose == sequence.L1
+        && arm.atTarget()) { // move to final location to score l2
+      // sets position using constants
+      armAngle = SuperStructureConstants.L1Angle;
+      extendDistance = SuperStructureConstants.L1Extend;
+      // sequence holder
+      lastPose = sequence.Prep;
 
-  //   } else if (!opB
-  //       && lastPose == sequence.L3
-  //       && arm.atTarget()) { // move to final location to score l3
-  //     // sets position using constants
-  //     armAngle = SuperStructureConstants.L3Angle;
-  //     extendDistance = SuperStructureConstants.L3Extend;
-  //     // sequence holder
-  //     lastPose = sequence.Prep;
+    } else if (!opB
+        && lastPose == sequence.L3
+        && arm.atTarget()) { // move to final location to score l3
+      // sets position using constants
+      armAngle = SuperStructureConstants.L3Angle;
+      extendDistance = SuperStructureConstants.L3Extend;
+      // sequence holder
+      lastPose = sequence.Prep;
 
-  //   } else if (!opX
-  //       && lastPose == sequence.L2
-  //       && arm.atTarget()) { // move to final location to score l2
-  //     // sets position using constants
-  //     armAngle = SuperStructureConstants.L2Angle;
-  //     extendDistance = SuperStructureConstants.L2Extend;
-  //     // sequence holder
-  //     lastPose = sequence.Prep;
-  //   } else if (!opY
-  //       && lastPose == sequence.L4
-  //       && arm.atTarget()) { // move to final locaiton to score l4
-  //     // sets position using constants
-  //     armAngle = SuperStructureConstants.L4Angle;
-  //     extendDistance = SuperStructureConstants.L4Extend;
+    } else if (!opX
+        && lastPose == sequence.L2
+        && arm.atTarget()) { // move to final location to score l2
+      // sets position using constants
+      armAngle = SuperStructureConstants.L2Angle;
+      extendDistance = SuperStructureConstants.L2Extend;
+      // sequence holder
+      lastPose = sequence.Prep;
+    } else if (!opY
+        && lastPose == sequence.L4
+        && arm.atTarget()) { // move to final locaiton to score l4
+      // sets position using constants
+      armAngle = SuperStructureConstants.L4Angle;
+      extendDistance = SuperStructureConstants.L4Extend;
 
-  //     // sequence holder
-  //     lastPose = sequence.Prep;
-  //   }
-  //   // Home Pose
-  //   else if (lastPose == sequence.Home || (opLb && opRb)) { // go to home if not in sequence
-  //     // sets position using constants
-  //     armAngle = SuperStructureConstants.HomeAngle;
-  //     extendDistance = SuperStructureConstants.HomeExtend;
-  //     // sequence holder
-  //     lastPose = sequence.Home;
-  //   }
+      // sequence holder
+      lastPose = sequence.Prep;
+    }
+    // Home Pose
+    else if (lastPose == sequence.Home || (opLb && opRb)) { // go to home if not in sequence
+      // sets position using constants
+      armAngle = SuperStructureConstants.HomeAngle;
+      extendDistance = SuperStructureConstants.HomeExtend;
+      // sequence holder
+      lastPose = sequence.Home;
+    }
 
-  //   arm.setPosition(new Rotation2d(Units.degreesToRadians(armAngle)));
-  //   //  climb.setClimbPosition(new Rotation2d(Units.degreesToRadians(climbAngle)));
-  //   extension.extendToDistance(extendDistance);
-  // }
+    arm.setPosition(new Rotation2d(Units.degreesToRadians(armAngle)));
+    //  climb.setClimbPosition(new Rotation2d(Units.degreesToRadians(climbAngle)));
+    extension.extendToDistance(extendDistance);
+  }
 
-  // public void setArm(double angle) {
-  //   arm.setPosition(new Rotation2d(Units.degreesToRadians(angle)));
-  //   armAngle = angle;
-  // }
+  public void setArm(double angle) {
+    arm.setPosition(new Rotation2d(Units.degreesToRadians(angle)));
+    armAngle = angle;
+  }
 
-  // public void setExtension(double extend) {
-  //   extension.extendToDistance(extend);
-  //   extendDistance = extend;
-  // }
+  public void setExtension(double extend) {
+    extension.extendToDistance(extend);
+    extendDistance = extend;
+  }
 
   // public void setClimb(double angle){
   //   climb.setClimbPosition(angle);
