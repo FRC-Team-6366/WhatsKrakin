@@ -229,7 +229,7 @@ public class RobotContainer {
 
                   Pose2d startPos =
                       new Pose2d(currentPose.getTranslation(), currentPose.getRotation());
-                  Pose2d endPos = new Pose2d(3.65, 2.77, new Rotation2d(61.2));
+                  Pose2d endPos = new Pose2d(3.65, 2.77, new Rotation2d(-61.2));
 
                   List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(startPos, endPos);
                   PathPlannerPath path =
@@ -238,7 +238,7 @@ public class RobotContainer {
                           new PathConstraints(
                               0.5, 0.5, Units.degreesToRadians(360), Units.degreesToRadians(540)),
                           null,
-                          new GoalEndState(0.0, new Rotation2d(61.2)));
+                          new GoalEndState(0.0, endPos.getRotation()));
 
                   path.preventFlipping = true;
 
