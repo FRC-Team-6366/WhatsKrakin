@@ -238,7 +238,7 @@ public class RobotContainer {
                           new PathConstraints(
                               0.5, 0.5, Units.degreesToRadians(360), Units.degreesToRadians(540)),
                           null,
-                          new GoalEndState(0.0, endPos.getRotation()));
+                          new GoalEndState(0.0, new Rotation2d(61.2)));
 
                   path.preventFlipping = true;
 
