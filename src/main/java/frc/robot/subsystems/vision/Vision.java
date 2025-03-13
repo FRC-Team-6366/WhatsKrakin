@@ -65,7 +65,7 @@ public class Vision extends SubsystemBase {
   }
 
   public void getTargetId(int cameraIndex) {
-    System.out.println(inputs[cameraIndex].latestTargetObservation.toString());
+    System.out.println(inputs[cameraIndex].tagIds[0]);
   }
 
   @Override
