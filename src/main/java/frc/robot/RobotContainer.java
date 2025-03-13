@@ -19,6 +19,7 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -50,6 +51,7 @@ import frc.robot.subsystems.vision.VisionIOPhotonVision;
 import frc.robot.subsystems.vision.VisionIOPhotonVisionSim;
 import frc.robot.util.IO;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
+import org.opencv.video.TrackerDaSiamRPN_Params;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -214,7 +216,12 @@ public class RobotContainer {
                     drive)
                 .ignoringDisable(true));
 
-    controller.rightTrigger(0.1).onTrue(Commands.run(() -> vision.getTargetId(0)));
+    controller.rightTrigger(0.1).whileTrue(Commands.runOnce(() -> {
+        Pose2d currentPose = drive.getPose();
+
+        Pose2d startPos = new Pose2d(currentPose.getTranslation(), currentPose.getRotation());
+        Pose2d endPos = new Pose2d()
+    }));
   }
 
   // private void configurePoleBindings() {}
