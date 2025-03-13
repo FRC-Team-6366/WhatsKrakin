@@ -236,7 +236,7 @@ public class RobotContainer {
                       new PathPlannerPath(
                           waypoints,
                           new PathConstraints(
-                              0.5, 0.5, Units.degreesToRadians(360), Units.degreesToRadians(540)),
+                              1, 1, Units.degreesToRadians(360), Units.degreesToRadians(540)),
                           null,
                           new GoalEndState(0.0, endPos.getRotation()));
 
@@ -246,29 +246,29 @@ public class RobotContainer {
                 }));
 
     controller
-    .rightTrigger(0.1)
-    .whileTrue(
-        Commands.runOnce(
-            () -> {
-                Pose2d currentPose = drive.getPose();
+        .rightTrigger(0.1)
+        .whileTrue(
+            Commands.runOnce(
+                () -> {
+                  Pose2d currentPose = drive.getPose();
 
-                Pose2d startPos =
-                    new Pose2d(currentPose.getTranslation(), currentPose.getRotation());
-                Pose2d endPos = new Pose2d(3.77, 2.61, new Rotation2d(240));
+                  Pose2d startPos =
+                      new Pose2d(currentPose.getTranslation(), currentPose.getRotation());
+                  Pose2d endPos = new Pose2d(3.77, 2.61, new Rotation2d(240));
 
-                List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(startPos, endPos);
-                PathPlannerPath path =
-                    new PathPlannerPath(
-                        waypoints,
-                        new PathConstraints(
-                            0.5, 0.5, Units.degreesToRadians(360), Units.degreesToRadians(540)),
-                        null,
-                        new GoalEndState(0.0, endPos.getRotation()));
+                  List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(startPos, endPos);
+                  PathPlannerPath path =
+                      new PathPlannerPath(
+                          waypoints,
+                          new PathConstraints(
+                              1, 1, Units.degreesToRadians(360), Units.degreesToRadians(540)),
+                          null,
+                          new GoalEndState(0.0, endPos.getRotation()));
 
-                path.preventFlipping = true;
+                  path.preventFlipping = true;
 
-                AutoBuilder.followPath(path).schedule();
-            }));
+                  AutoBuilder.followPath(path).schedule();
+                }));
   }
 
   // private void configurePoleBindings() {}
