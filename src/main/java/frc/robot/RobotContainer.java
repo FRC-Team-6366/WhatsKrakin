@@ -15,18 +15,14 @@ package frc.robot;
 
 import static frc.robot.subsystems.vision.VisionConstants.*;
 
-import java.util.List;
-
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.path.GoalEndState;
 import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.path.Waypoint;
-
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
@@ -58,6 +54,7 @@ import frc.robot.subsystems.vision.VisionIO;
 import frc.robot.subsystems.vision.VisionIOPhotonVision;
 import frc.robot.subsystems.vision.VisionIOPhotonVisionSim;
 import frc.robot.util.IO;
+import java.util.List;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -223,19 +220,30 @@ public class RobotContainer {
                     drive)
                 .ignoringDisable(true));
 
-    controller.rightTrigger(0.1).whileTrue(Commands.runOnce(() -> {
-        Pose2d currentPose = drive.getPose();
+    controller
+        .rightTrigger(0.1)
+        .whileTrue(
+            Commands.runOnce(
+                () -> {
+                  Pose2d currentPose = drive.getPose();
 
-        Pose2d startPos = new Pose2d(currentPose.getTranslation(), currentPose.getRotation());
-        Pose2d endPos = new Pose2d(3.65, 2.77, new Rotation2d(61.2));
+                  Pose2d startPos =
+                      new Pose2d(currentPose.getTranslation(), currentPose.getRotation());
+                  Pose2d endPos = new Pose2d(3.65, 2.77, new Rotation2d(61.2));
 
-        List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(startPos, endPos);
-        PathPlannerPath path = new PathPlannerPath(waypoints, new PathConstraints(4.0, 4.0, Units.degreesToRadians(360), Units.degreesToRadians(540)), null, new GoalEndState(0.0, endPos.getRotation()));
+                  List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(startPos, endPos);
+                  PathPlannerPath path =
+                      new PathPlannerPath(
+                          waypoints,
+                          new PathConstraints(
+                              0.5, 0.5, Units.degreesToRadians(360), Units.degreesToRadians(540)),
+                          null,
+                          new GoalEndState(0.0, endPos.getRotation()));
 
-        path.preventFlipping = true;
+                  path.preventFlipping = true;
 
-        AutoBuilder.followPath(path).schedule();
-    }));
+                  AutoBuilder.followPath(path).schedule();
+                }));
   }
 
   // private void configurePoleBindings() {}
