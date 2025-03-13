@@ -216,12 +216,12 @@ public class RobotContainer {
                     drive)
                 .ignoringDisable(true));
 
-    controller.rightTrigger(0.1).whileTrue(Commands.runOnce(() -> {
-        Pose2d currentPose = drive.getPose();
+    // controller.rightTrigger(0.1).whileTrue(Commands.runOnce(() -> {
+    //     Pose2d currentPose = drive.getPose();
 
-        Pose2d startPos = new Pose2d(currentPose.getTranslation(), currentPose.getRotation());
-        Pose2d endPos = new Pose2d()
-    }));
+    //     Pose2d startPos = new Pose2d(currentPose.getTranslation(), currentPose.getRotation());
+    //     Pose2d endPos = new Pose2d()
+    // }));
   }
 
   // private void configurePoleBindings() {}
