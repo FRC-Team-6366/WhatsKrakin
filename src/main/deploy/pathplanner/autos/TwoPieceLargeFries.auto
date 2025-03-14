@@ -1,0 +1,49 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "named",
+          "data": {
+            "name": "Prep"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "CarterSpecial"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "L4"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "CSp2"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "CSp3"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "L4"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": null,
+  "choreoAuto": false
+}
