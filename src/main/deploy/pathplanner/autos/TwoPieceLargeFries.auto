@@ -5,12 +5,6 @@
     "data": {
       "commands": [
         {
-          "type": "named",
-          "data": {
-            "name": "Prep"
-          }
-        },
-        {
           "type": "path",
           "data": {
             "pathName": "CarterSpecial"
