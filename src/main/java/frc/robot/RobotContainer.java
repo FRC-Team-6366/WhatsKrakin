@@ -32,6 +32,13 @@ import frc.robot.subsystems.drive.GyroIOPigeon2;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
+import frc.robot.subsystems.extend.Extend;
+import frc.robot.subsystems.extend.ExtendIOTalonFX;
+import frc.robot.subsystems.extend.ExtendSim;
+import frc.robot.subsystems.pivot.Pivot;
+import frc.robot.subsystems.pivot.PivotIO;
+import frc.robot.subsystems.pivot.PivotIOTalonFX;
+import frc.robot.subsystems.pivot.PivotSim;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIO;
 import frc.robot.subsystems.vision.VisionIOPhotonVision;
@@ -48,9 +55,13 @@ public class RobotContainer {
   // Subsystems
   private final Vision vision;
   private final Drive drive;
+  private final Pivot pivot;
+  private final Extend extend;
+
 
   // Controller
   private final CommandXboxController controller = new CommandXboxController(0);
+    private final CommandXboxController m_operatorController = new CommandXboxController(1);
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
@@ -77,6 +88,8 @@ public class RobotContainer {
                 // new VisionIOPhotonVision(camera2Name, robotToCamera2),
                 // new VisionIOPhotonVision(camera3Name, robotToCamera3)
                 );
+                pivot = new Pivot(new PivotIOTalonFX());
+                extend = new Extend(new ExtendIOTalonFX());
 
         break;
 
@@ -98,6 +111,8 @@ public class RobotContainer {
                 // new VisionIOPhotonVisionSim(camera2Name, robotToCamera2, drive::getPose),
                 // new VisionIOPhotonVisionSim(camera3Name, robotToCamera3, drive::getPose)
                 );
+                pivot =  null;
+                extend = null;
         break;
 
       default:
@@ -111,6 +126,9 @@ public class RobotContainer {
                 new ModuleIO() {},
                 new ModuleIO() {});
         vision = new Vision(drive::addVisionMeasurement, new VisionIO() {}, new VisionIO() {});
+
+        pivot = new Pivot(new PivotIOTalonFX());
+        extend = new Extend(new ExtendIOTalonFX());
         break;
     }
 
@@ -153,17 +171,17 @@ public class RobotContainer {
             () -> -controller.getRightX()));
 
     // Lock to 0° when A button is held
-    controller
-        .a()
-        .whileTrue(
-            DriveCommands.joystickDriveAtAngle(
-                drive,
-                () -> -controller.getLeftY(),
-                () -> -controller.getLeftX(),
-                () -> new Rotation2d()));
+    // controller
+    //     .a()
+    //     .whileTrue(
+    //         DriveCommands.joystickDriveAtAngle(
+    //             drive,
+    //             () -> -controller.getLeftY(),
+    //             () -> -controller.getLeftX(),
+    //             () -> new Rotation2d()));
 
-    // Switch to X pattern when X button is pressed
-    controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
+    // // Switch to X pattern when X button is pressed
+    // controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
 
     // Reset gyro to 0° when B button is pressed
     controller
@@ -175,7 +193,87 @@ public class RobotContainer {
                             new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
                     drive)
                 .ignoringDisable(true));
+
+
+
+
+
+
+
+    //             extend.setDefaultCommand(Commands.sequence(Commands.run(() -> extend.moveExtend(-0.5), extend).until(() -> extend.extendAtSetPoint(-0.5))
+    // .andThen(Commands.run(() -> pivot.movePivot(0)))));
+
+
+
+    //Prep Sequences
+
+    m_operatorController.a().whileTrue(
+        Commands.sequence(
+            Commands.run(() -> pivot.movePivot(0.547))
+                .until(() -> pivot.pivotAtSetPoint(0.547))
+                .andThen(Commands.run(() -> extend.moveExtend(-0.3)))//L3
+        )
+    ).onFalse(
+            Commands.sequence(
+                Commands.run(() -> extend.moveExtend(0.21))
+                    .until(() -> extend.extendAtSetPoint(0.21))
+                    .andThen(Commands.run(() -> pivot.movePivot(0)))
+            )
+      );
+
+    // m_operatorController.b().whileTrue(
+    //     Commands.sequence(
+    //         Commands.run(() -> pivot.movePivot(0.523))
+    //             .until(() -> pivot.pivotAtSetPoint(0.523))
+    //             .andThen(Commands.run(() -> extend.moveExtend(0)))//L4
+    //             )
+    // ).onFalse(
+    //     Commands.sequence(
+    //         Commands.run(() -> extend.moveExtend(-0.5))
+    //             .until(() -> extend.extendAtSetPoint(-0.5))
+    //             .andThen(Commands.run(() -> pivot.movePivot(0)))
+    //         )
+    // );
+
+    // m_operatorController.y().whileTrue(
+    //     Commands.sequence(
+    //         Commands.run(() -> pivot.movePivot(0.47))
+    //             .until(() -> pivot.pivotAtSetPoint(0.47))
+    //             .andThen(Commands.run(() -> extend.moveExtend(1.57))) //L2
+    //         )
+    // ).onFalse(
+    //     Commands.sequence(Commands.run(() -> extend.moveExtend(-0.5))
+    //             .until(() -> extend.extendAtSetPoint(-0.5))
+    //             .andThen(Commands.run(() -> pivot.movePivot(0)))
+    //     )
+    // );
+
+    //Score Sequences
+
+    // m_operatorController.leftBumper().and(m_operatorController.a()).whileTrue(
+    //     Commands.sequence(Commands.run(() -> pivot.movePivot(0.7))
+    //         .until(() -> pivot.pivotAtSetPoint(0.7))
+    //         .andThen(Commands.run(() -> extend.moveExtend(-0.65)))
+    //     )
+    // );
+
+    //  m_operatorController.leftBumper().and(m_operatorController.b()).whileTrue(
+    //     Commands.sequence(Commands.run(() -> pivot.movePivot(0.6))
+    //         .until(() -> pivot.pivotAtSetPoint(0.6))
+    //         .andThen(Commands.run(() -> extend.moveExtend(-0.7))
+    //         .until(() -> extend.extendAtSetPoint(-0.7)))
+    //         .andThen(Commands.run(() -> pivot.movePivot(0.45)))
+    //     )
+    // );
+
+    //  m_operatorController.leftBumper().and(m_operatorController.y()).whileTrue(
+    //     Commands.sequence(Commands.run(() -> pivot.movePivot(0.52))
+    //         .until(() -> pivot.pivotAtSetPoint(0.52))
+    //         .andThen(Commands.run(() -> extend.moveExtend(1)))
+    //     )
+    // );
   }
+  
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
