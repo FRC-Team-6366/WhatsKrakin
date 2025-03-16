@@ -27,10 +27,10 @@ import frc.robot.subsystems.pivot.PivotConstants;
 
 
 public class ExtendIOTalonFX implements ExtendIO{
-    private final TalonFX _extendKMotor;
+  private final TalonFX _extendKMotor;
   private final CANcoder _extendCANcoder;
 
-    private final StatusSignal<Angle> absolutePosition;
+  private final StatusSignal<Angle> absolutePosition;
   private final StatusSignal<AngularVelocity> absoluteVelocity;
   private final StatusSignal<Angle> position;
   private final StatusSignal<AngularVelocity> velocity;
@@ -71,9 +71,9 @@ public class ExtendIOTalonFX implements ExtendIO{
     slot0.kD = ExtendConstants.extendkD; // A velocity error of 1 rps results in 0.5 V output
            FeedbackConfigs fdb = cfg.Feedback;
              cfg.SoftwareLimitSwitch.ForwardSoftLimitEnable = ExtendConstants.extendSoftLimitHighEnabled;
-           cfg.SoftwareLimitSwitch.ForwardSoftLimitThreshold = ExtendConstants.extendSoftLimitHigh;
+           cfg.SoftwareLimitSwitch.ForwardSoftLimitThreshold = ExtendConstants.extendSoftLimitHigh; //Add soft limits
            cfg.SoftwareLimitSwitch.ReverseSoftLimitEnable = ExtendConstants.extendSoftLimitLowEnabled;
-           cfg.SoftwareLimitSwitch.ReverseSoftLimitThreshold = ExtendConstants.extendSoftLimitLow;
+           cfg.SoftwareLimitSwitch.ReverseSoftLimitThreshold = ExtendConstants.extendSoftLimitLow; //Add soft limits
            cfg.MotionMagic.withMotionMagicCruiseVelocity(RotationsPerSecond.of(ExtendConstants.extendMMCruiseVelocity)) // 5 (mechanism) rotations per second cruise
            .withMotionMagicAcceleration(RotationsPerSecondPerSecond.of(ExtendConstants.extendMMAcceleration)) // Take approximately 0.5 seconds to reach max vel
            // Take approximately 0.1 seconds to reach max accel 
