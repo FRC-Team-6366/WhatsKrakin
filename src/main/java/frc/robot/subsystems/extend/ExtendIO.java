@@ -10,7 +10,6 @@ public static class ExtendIOInputs {
     public double positionAngle = 0.0;
     public double velocityRPM = 0.0;
   
-
     public double appliedVoltage = 0.0;
     public double supplyCurrentAmps = 0.0;
     public double torqueCurrentAmps = 0.0;
