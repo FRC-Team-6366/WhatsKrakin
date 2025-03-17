@@ -38,7 +38,9 @@ import frc.robot.subsystems.leds.Leds;
 import frc.robot.subsystems.pivot.Pivot;
 import frc.robot.subsystems.pivot.PivotIOTalonFX;
 import frc.robot.subsystems.sensors.Sensors;
+import frc.robot.subsystems.sensors.SensorsIOCanrange;
 import frc.robot.subsystems.vacuum.Vacuum;
+import frc.robot.subsystems.vacuum.VacuumIOServo;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIO;
 import frc.robot.subsystems.vision.VisionIOPhotonVision;
@@ -93,6 +95,8 @@ public class RobotContainer {
                 );
                 pivot = new Pivot(new PivotIOTalonFX());
                 extend = new Extend(new ExtendIOTalonFX());
+                vacuum = new Vacuum(new VacuumIOServo());
+                sensors = new Sensors(new SensorsIOCanrange());
 
         break;
 
@@ -116,6 +120,8 @@ public class RobotContainer {
                 );
                 pivot =  null;
                 extend = null;
+                vacuum = null;
+                sensors = null;
         break;
 
       default:
@@ -132,6 +138,8 @@ public class RobotContainer {
 
         pivot = new Pivot(new PivotIOTalonFX());
         extend = new Extend(new ExtendIOTalonFX());
+        vacuum = new Vacuum(new VacuumIOServo());
+        sensors = new Sensors(new SensorsIOCanrange());
         break;
     }
 
