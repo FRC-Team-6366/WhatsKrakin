@@ -16,7 +16,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.entech.subsystems.EntechSubsystem;
 import frc.robot.generated.TunerConstants;
-import frc.robot.subsystems.drive.Drive;
+import frc.robot.subsystems.drive.DriveSubsystem;
 import frc.robot.subsystems.drive.PhoenixOdometryThread;
 
 public class PigeonSubsystem extends EntechSubsystem<PigeonInput, PigeonOutput> {
@@ -38,7 +38,7 @@ public class PigeonSubsystem extends EntechSubsystem<PigeonInput, PigeonOutput> 
             yawVelocity = pigeon.getAngularVelocityZWorld();
             pigeon.getConfigurator().apply(new Pigeon2Configuration());
             pigeon.getConfigurator().setYaw(0.0);
-            yaw.setUpdateFrequency(Drive.ODOMETRY_FREQUENCY);
+            yaw.setUpdateFrequency(DriveSubsystem.ODOMETRY_FREQUENCY);
             yawVelocity.setUpdateFrequency(50.0);
             pigeon.optimizeBusUtilization();
             yawTimestampQueue = PhoenixOdometryThread.getInstance().makeTimestampQueue();

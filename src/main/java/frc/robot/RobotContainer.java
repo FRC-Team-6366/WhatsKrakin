@@ -23,24 +23,18 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
-import frc.robot.commands.DriveCommands;
-import frc.robot.generated.TunerConstants;
-import frc.robot.subsystems.drive.Drive;
-import frc.robot.subsystems.drive.ModuleIO;
-import frc.robot.subsystems.drive.ModuleIOSim;
-import frc.robot.subsystems.drive.ModuleIOTalonFX;
+import frc.robot.commands.DriveCommand;
+import frc.robot.subsystems.drive.DriveInput;
 import frc.robot.subsystems.extend.Extend;
 import frc.robot.subsystems.extend.ExtendIOTalonFX;
-import frc.robot.subsystems.extend.ExtendSim;
 import frc.robot.subsystems.pivot.Pivot;
-import frc.robot.subsystems.pivot.PivotIO;
 import frc.robot.subsystems.pivot.PivotIOTalonFX;
-import frc.robot.subsystems.pivot.PivotSim;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIO;
 import frc.robot.subsystems.vision.VisionIOPhotonVision;
 import frc.robot.subsystems.vision.VisionIOPhotonVisionSim;
+import frc.robot.util.DriveInputSupplier;
+
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -49,7 +43,7 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
  * periodic methods (other than the scheduler calls). Instead, the structure of the robot (including
  * subsystems, commands, and button mappings) should be declared here.
  */
-public class RobotContainer {
+public class RobotContainer implements DriveInputSupplier {
   // Subsystems
   private final Vision vision;
   private final Pivot pivot;
@@ -136,11 +130,7 @@ public class RobotContainer {
   private void configureButtonBindings() {
     // Default command, normal field-relative drive
     subsystemManager.getDriveSubsystem().setDefaultCommand(
-        DriveCommands.joystickDrive(
-            subsystemManager.getDriveSubsystem(),
-            () -> -controller.getLeftY(),
-            () -> -controller.getLeftX(),
-            () -> -controller.getRightX()));
+        new DriveCommand(subsystemManager.getDriveSubsystem(), this));
 
     // Lock to 0° when A button is held
     // controller
@@ -254,5 +244,18 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     return autoChooser.get();
+  }
+
+  @Override
+  public DriveInput getDriveInput() {
+    DriveInput input = new DriveInput();
+
+    input.setGyroAngle(RobotIO.getInstance().getLatesPigeonOutput().getYawPosition());
+    input.setLatestOdometryPose(RobotIO.getInstance().getLatestDriveOutput().getEstimatedPose());
+    input.setXSpeed(-controller.getLeftY());
+    input.setYSpeed(-controller.getLeftX());
+    input.setRotation(-controller.getRightX());
+    input.setKey("initialRaw");
+    return input;
   }
 }

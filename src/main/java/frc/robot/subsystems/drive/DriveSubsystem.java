@@ -7,6 +7,7 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import org.littletonrobotics.junction.Logger;
 
+import com.ctre.phoenix6.CANBus;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.ModuleConfig;
 import com.pathplanner.lib.config.PIDConstants;
@@ -66,6 +67,9 @@ public class DriveSubsystem extends EntechSubsystem<DriveInput, DriveOutput> {
 
     private SwerveModulePosition[] lastModulePositions;
     private Rotation2d rawGyroRotation = new Rotation2d();
+
+    public static final double ODOMETRY_FREQUENCY =
+      new CANBus(TunerConstants.DrivetrainConstants.CANBusName).isNetworkFD() ? 250.0 : 100.0;
 
     public static final double DRIVE_BASE_RADIUS =
       Math.max(

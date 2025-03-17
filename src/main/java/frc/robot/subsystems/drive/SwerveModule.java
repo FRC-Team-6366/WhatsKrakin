@@ -158,7 +158,7 @@ public class SwerveModule {
 
         // Configure periodic frames
         BaseStatusSignal.setUpdateFrequencyForAll(
-            Drive.ODOMETRY_FREQUENCY, drivePosition, turnPosition);
+            DriveSubsystem.ODOMETRY_FREQUENCY, drivePosition, turnPosition);
         BaseStatusSignal.setUpdateFrequencyForAll(
             50.0,
             driveVelocity,
