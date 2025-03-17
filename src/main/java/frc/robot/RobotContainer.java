@@ -27,14 +27,14 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.drive.Drive;
-import frc.robot.subsystems.drive.GyroIO;
-import frc.robot.subsystems.drive.GyroIOPigeon2;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
 import frc.robot.subsystems.extend.Extend;
 import frc.robot.subsystems.extend.ExtendIOTalonFX;
 import frc.robot.subsystems.extend.ExtendSim;
+import frc.robot.subsystems.pigeon.GyroIO;
+import frc.robot.subsystems.pigeon.GyroIOPigeon2;
 import frc.robot.subsystems.pivot.Pivot;
 import frc.robot.subsystems.pivot.PivotIO;
 import frc.robot.subsystems.pivot.PivotIOTalonFX;
@@ -73,12 +73,7 @@ public class RobotContainer {
 
         // Real robot, instantiate hardware IO implementations
         drive =
-            new Drive(
-                new GyroIOPigeon2(),
-                new ModuleIOTalonFX(TunerConstants.FrontLeft),
-                new ModuleIOTalonFX(TunerConstants.FrontRight),
-                new ModuleIOTalonFX(TunerConstants.BackLeft),
-                new ModuleIOTalonFX(TunerConstants.BackRight));
+            new Drive();
 
         vision =
             new Vision(
