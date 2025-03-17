@@ -36,8 +36,33 @@ import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 public class Robot extends LoggedRobot {
   private Command autonomousCommand;
   private RobotContainer robotContainer;
+  private SubsystemManager subsystemManager;
 
   public Robot() {
+    
+
+    // Check for valid swerve config
+    var modules =
+        new SwerveModuleConstants[] {
+          TunerConstants.FrontLeft,
+          TunerConstants.FrontRight,
+          TunerConstants.BackLeft,
+          TunerConstants.BackRight
+        };
+    for (var constants : modules) {
+      if (constants.DriveMotorType != DriveMotorArrangement.TalonFX_Integrated
+          || constants.SteerMotorType != SteerMotorArrangement.TalonFX_Integrated) {
+        throw new RuntimeException(
+            "You are using an unsupported swerve configuration, which this template does not support without manual customization. The 2025 release of Phoenix supports some swerve configurations which were not available during 2025 beta testing, preventing any development and support from the AdvantageKit developers.");
+      }
+    }
+
+    // Instantiate our RobotContainer. This will perform all our button bindings,
+    // and put our autonomous chooser on the dashboard.
+    robotContainer = new RobotContainer();
+  }
+
+  private void loggerInit() {
     // Record metadata
     Logger.recordMetadata("ProjectName", BuildConstants.MAVEN_NAME);
     Logger.recordMetadata("BuildDate", BuildConstants.BUILD_DATE);
@@ -80,26 +105,12 @@ public class Robot extends LoggedRobot {
 
     // Start AdvantageKit logger
     Logger.start();
+  }
 
-    // Check for valid swerve config
-    var modules =
-        new SwerveModuleConstants[] {
-          TunerConstants.FrontLeft,
-          TunerConstants.FrontRight,
-          TunerConstants.BackLeft,
-          TunerConstants.BackRight
-        };
-    for (var constants : modules) {
-      if (constants.DriveMotorType != DriveMotorArrangement.TalonFX_Integrated
-          || constants.SteerMotorType != SteerMotorArrangement.TalonFX_Integrated) {
-        throw new RuntimeException(
-            "You are using an unsupported swerve configuration, which this template does not support without manual customization. The 2025 release of Phoenix supports some swerve configurations which were not available during 2025 beta testing, preventing any development and support from the AdvantageKit developers.");
-      }
-    }
-
-    // Instantiate our RobotContainer. This will perform all our button bindings,
-    // and put our autonomous chooser on the dashboard.
-    robotContainer = new RobotContainer();
+  @Override
+  public void robotInit() {
+    loggerInit();
+    subsystemManager = new SubsystemManager();
   }
 
   /** This function is called periodically during all modes. */
