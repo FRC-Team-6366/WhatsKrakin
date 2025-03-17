@@ -30,18 +30,20 @@ public class PigeonSubsystem extends EntechSubsystem<PigeonInput, PigeonOutput> 
 
     @Override
     public void initialize() {
-        pigeon = new Pigeon2(
-            TunerConstants.DrivetrainConstants.Pigeon2Id,
-            TunerConstants.DrivetrainConstants.CANBusName);
-        yaw = pigeon.getYaw();
-        yawVelocity = pigeon.getAngularVelocityZWorld();
-        pigeon.getConfigurator().apply(new Pigeon2Configuration());
-        pigeon.getConfigurator().setYaw(0.0);
-        yaw.setUpdateFrequency(Drive.ODOMETRY_FREQUENCY);
-        yawVelocity.setUpdateFrequency(50.0);
-        pigeon.optimizeBusUtilization();
-        yawTimestampQueue = PhoenixOdometryThread.getInstance().makeTimestampQueue();
-        yawPositionQueue = PhoenixOdometryThread.getInstance().registerSignal(pigeon.getYaw());
+        if (ENABLED) {
+            pigeon = new Pigeon2(
+                TunerConstants.DrivetrainConstants.Pigeon2Id,
+                TunerConstants.DrivetrainConstants.CANBusName);
+            yaw = pigeon.getYaw();
+            yawVelocity = pigeon.getAngularVelocityZWorld();
+            pigeon.getConfigurator().apply(new Pigeon2Configuration());
+            pigeon.getConfigurator().setYaw(0.0);
+            yaw.setUpdateFrequency(Drive.ODOMETRY_FREQUENCY);
+            yawVelocity.setUpdateFrequency(50.0);
+            pigeon.optimizeBusUtilization();
+            yawTimestampQueue = PhoenixOdometryThread.getInstance().makeTimestampQueue();
+            yawPositionQueue = PhoenixOdometryThread.getInstance().registerSignal(pigeon.getYaw());
+        }
     }
 
     @Override
@@ -63,18 +65,20 @@ public class PigeonSubsystem extends EntechSubsystem<PigeonInput, PigeonOutput> 
     public PigeonOutput toOutputs() {
         PigeonOutput output = new PigeonOutput();
 
-        output.setConnected(BaseStatusSignal.refreshAll(yaw, yawVelocity).equals(StatusCode.OK));
-        output.setYawPosition(Rotation2d.fromDegrees(yaw.getValueAsDouble()));
-        output.setYawVelocityRadPerSec(Units.degreesToRadians(yawVelocity.getValueAsDouble()));
-        output.setOdometryYawPositions(
-            yawPositionQueue.stream()
-                .map((Double value) -> Rotation2d.fromDegrees(value))
-                .toArray(Rotation2d[]::new)
-        );
-        output.setOdometryYawTimestamps(yawTimestampQueue.stream().mapToDouble((Double value) -> value).toArray());
+        if (ENABLED) {
+            output.setConnected(BaseStatusSignal.refreshAll(yaw, yawVelocity).equals(StatusCode.OK));
+            output.setYawPosition(Rotation2d.fromDegrees(yaw.getValueAsDouble()));
+            output.setYawVelocityRadPerSec(Units.degreesToRadians(yawVelocity.getValueAsDouble()));
+            output.setOdometryYawPositions(
+                yawPositionQueue.stream()
+                    .map((Double value) -> Rotation2d.fromDegrees(value))
+                    .toArray(Rotation2d[]::new)
+            );
+            output.setOdometryYawTimestamps(yawTimestampQueue.stream().mapToDouble((Double value) -> value).toArray());
 
-        yawTimestampQueue.clear();
-        yawPositionQueue.clear();
+            yawTimestampQueue.clear();
+            yawPositionQueue.clear();
+        }
 
         return output;
     }
