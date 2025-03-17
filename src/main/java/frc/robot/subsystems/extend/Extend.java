@@ -1,10 +1,13 @@
 package frc.robot.subsystems.extend;
 import org.littletonrobotics.junction.Logger;
 
+
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
+
 import frc.robot.subsystems.extend.ExtendIO.ExtendIOInputs;
 
 
-public class Extend {
+public class Extend extends SubsystemBase{
     private ExtendIO io;
     private ExtendIOInputs inputs = new ExtendIOInputsAutoLogged();
 

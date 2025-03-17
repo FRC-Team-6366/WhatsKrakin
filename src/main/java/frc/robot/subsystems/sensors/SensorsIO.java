@@ -10,7 +10,7 @@ public interface SensorsIO {
             public boolean connected = false;
             public double sensorValue = 0.0;
             public double sensorOneDistance = 0.0;
-            public double sensorTwoDistance = 0.0;
+            // public double sensorTwoDistance = 0.0;
         
 }
     public default void updateInputs(SensorsIOInputs inputs) {}

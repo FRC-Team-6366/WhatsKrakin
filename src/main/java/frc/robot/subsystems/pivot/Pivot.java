@@ -1,9 +1,10 @@
 package frc.robot.subsystems.pivot;
 import org.littletonrobotics.junction.Logger;
 
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.pivot.PivotIO.PivotIOInputs;
 
-public class Pivot {
+public class Pivot extends SubsystemBase {
     private PivotIO io;
     private PivotIOInputs inputs = new PivotIOInputsAutoLogged();
   

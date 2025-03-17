@@ -34,8 +34,11 @@ import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
 import frc.robot.subsystems.extend.Extend;
 import frc.robot.subsystems.extend.ExtendIOTalonFX;
+import frc.robot.subsystems.leds.Leds;
 import frc.robot.subsystems.pivot.Pivot;
 import frc.robot.subsystems.pivot.PivotIOTalonFX;
+import frc.robot.subsystems.sensors.Sensors;
+import frc.robot.subsystems.vacuum.Vacuum;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIO;
 import frc.robot.subsystems.vision.VisionIOPhotonVision;
@@ -54,6 +57,9 @@ public class RobotContainer {
   private final Drive drive;
   private final Pivot pivot;
   private final Extend extend;
+  private final Vacuum vacuum;
+  private final Sensors sensors;
+  private final Leds leds;
 
 
   // Controller
@@ -197,8 +203,8 @@ public class RobotContainer {
 
 
 
-    //             extend.setDefaultCommand(Commands.sequence(Commands.run(() -> extend.moveExtend(-0.5), extend).until(() -> extend.extendAtSetPoint(-0.5))
-    // .andThen(Commands.run(() -> pivot.movePivot(0)))));
+                extend.setDefaultCommand(Commands.sequence(Commands.run(() -> extend.moveExtend(-0.5), extend).until(() -> extend.extendAtSetPoint(-0.5))
+    .andThen(Commands.run(() -> pivot.movePivot(0), pivot))));
 
 
 
