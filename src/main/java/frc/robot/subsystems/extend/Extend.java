@@ -8,6 +8,12 @@ public class Extend {
     private ExtendIO io;
     private ExtendIOInputs inputs = new ExtendIOInputsAutoLogged();
 
+      /** updates extend values periodically */
+      public void periodic() {
+        io.updateInputs(inputs);
+        // Logger.processInputs("Extend", inputs);
+      }
+
     public Extend(ExtendIO io) {
       this.io = io;
     }
@@ -20,11 +26,5 @@ public class Extend {
       return io.extendAtSetPoint(atPosition);
     }
 
-
-    /** updates extend values periodically */
-    public void periodic() {
-      io.updateInputs(inputs);
-    //   Logger.processInputs("Extend", inputs);
-    }
 
 }

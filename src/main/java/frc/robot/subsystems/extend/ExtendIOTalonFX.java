@@ -92,6 +92,8 @@ public class ExtendIOTalonFX implements ExtendIO{
             tempCelsius,
             absolutePosition,
             absoluteVelocity);
+            _extendCANcoder.optimizeBusUtilization(0.0, 1.0);
+           _extendKMotor.optimizeBusUtilization(0.0, 1.0);
             _extendKMotor.setPosition(_extendCANcoder.getPosition().getValueAsDouble());
            _extendKMotor.getConfigurator().apply(cfg);
   }

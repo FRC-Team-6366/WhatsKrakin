@@ -83,6 +83,16 @@ public class PivotIOTalonFX implements PivotIO {
              fdb.FeedbackSensorSource = FeedbackSensorSourceValue.FusedCANcoder; //rezero CANcoder
              fdb.FeedbackRemoteSensorID = _pivotCANcoder.getDeviceID();
 
+             BaseStatusSignal.setUpdateFrequencyForAll(
+              50,
+              position,
+              velocity,
+              voltage,
+              supplyCurrentAmps,
+              torqueCurrentAmps,
+              tempCelsius,
+              absolutePosition,
+              absoluteVelocity);
         _pivotkMotor.optimizeBusUtilization(0.0, 1.0);
         _pivotCANcoder.optimizeBusUtilization(0.0, 1.0);
            _pivotkMotor.setPosition(_pivotCANcoder.getAbsolutePosition().getValueAsDouble());
@@ -130,7 +140,6 @@ public class PivotIOTalonFX implements PivotIO {
         inputs.appliedVoltage = voltage.getValueAsDouble();
         inputs.supplyCurrentAmps = supplyCurrentAmps.getValueAsDouble();
         inputs.torqueCurrentAmps = torqueCurrentAmps.getValueAsDouble();
-        inputs.temperatureCelsius =
-            tempCelsius.getValueAsDouble(); // dont add absolute position or coder stuff
+        inputs.temperatureCelsius =tempCelsius.getValueAsDouble(); // dont add absolute position or coder stuff
       }    
 }

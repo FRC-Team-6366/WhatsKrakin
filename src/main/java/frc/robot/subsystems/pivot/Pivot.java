@@ -24,7 +24,7 @@ public class Pivot {
     /** updates arm values periodically */
     public void periodic() {
       io.updateInputs(inputs);
-    //   Logger.processInputs("Pivot", inputs);
+      // Logger.processInputs("Arm/Pivot", inputs);
     }
   
 
