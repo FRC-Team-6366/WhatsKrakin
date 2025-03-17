@@ -254,6 +254,10 @@ public class DriveSubsystem extends EntechSubsystem<DriveInput, DriveOutput> {
         odometryLock.unlock();
 
         // Update odometry
+
+        if (lastModulePositions == null) {
+            lastModulePositions = getModulePositions();
+        }
         double[] sampleTimestamps = frontLeft.getOdometryTimestamps();
         int sampleCount = sampleTimestamps.length;
         SwerveModulePosition[][] modulePositions = getModuleOdometryPositions();
