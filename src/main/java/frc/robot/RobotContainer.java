@@ -33,8 +33,6 @@ import frc.robot.subsystems.drive.ModuleIOTalonFX;
 import frc.robot.subsystems.extend.Extend;
 import frc.robot.subsystems.extend.ExtendIOTalonFX;
 import frc.robot.subsystems.extend.ExtendSim;
-import frc.robot.subsystems.pigeon.GyroIO;
-import frc.robot.subsystems.pigeon.GyroIOPigeon2;
 import frc.robot.subsystems.pivot.Pivot;
 import frc.robot.subsystems.pivot.PivotIO;
 import frc.robot.subsystems.pivot.PivotIOTalonFX;
@@ -54,9 +52,9 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 public class RobotContainer {
   // Subsystems
   private final Vision vision;
-  private final Drive drive;
   private final Pivot pivot;
   private final Extend extend;
+  private final SubsystemManager subsystemManager;
 
 
   // Controller
@@ -67,22 +65,13 @@ public class RobotContainer {
   private final LoggedDashboardChooser<Command> autoChooser;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
-  public RobotContainer() {
+  public RobotContainer(SubsystemManager subsystemManager) {
+    this.subsystemManager = subsystemManager;
     switch (Constants.currentMode) {
       case REAL:
-
-        // Real robot, instantiate hardware IO implementations
-        drive =
-            new Drive(
-                new GyroIOPigeon2(),
-                new ModuleIOTalonFX(TunerConstants.FrontLeft),
-                new ModuleIOTalonFX(TunerConstants.FrontRight),
-                new ModuleIOTalonFX(TunerConstants.BackLeft),
-                new ModuleIOTalonFX(TunerConstants.BackRight));
-
         vision =
             new Vision(
-                drive::addVisionMeasurement,
+                subsystemManager.getDriveSubsystem()::addVisionMeasurement,
                 new VisionIOPhotonVision(camera0Name, robotToCamera0),
                 new VisionIOPhotonVision(camera1Name, robotToCamera1)
                 // new VisionIOPhotonVision(camera2Name, robotToCamera2),
@@ -94,20 +83,11 @@ public class RobotContainer {
         break;
 
       case SIM:
-        // Sim robot, instantiate physics sim IO implementations
-        drive =
-            new Drive(
-                new GyroIO() {},
-                new ModuleIOSim(TunerConstants.FrontLeft),
-                new ModuleIOSim(TunerConstants.FrontRight),
-                new ModuleIOSim(TunerConstants.BackLeft),
-                new ModuleIOSim(TunerConstants.BackRight));
-
         vision =
             new Vision(
-                drive::addVisionMeasurement,
-                new VisionIOPhotonVisionSim(camera0Name, robotToCamera0, drive::getPose),
-                new VisionIOPhotonVisionSim(camera1Name, robotToCamera1, drive::getPose)
+                subsystemManager.getDriveSubsystem()::addVisionMeasurement,
+                new VisionIOPhotonVisionSim(camera0Name, robotToCamera0, subsystemManager.getDriveSubsystem()::getPose),
+                new VisionIOPhotonVisionSim(camera1Name, robotToCamera1, subsystemManager.getDriveSubsystem()::getPose)
                 // new VisionIOPhotonVisionSim(camera2Name, robotToCamera2, drive::getPose),
                 // new VisionIOPhotonVisionSim(camera3Name, robotToCamera3, drive::getPose)
                 );
@@ -117,15 +97,7 @@ public class RobotContainer {
 
       default:
         // Replayed robot, disable IO implementations
-
-        drive =
-            new Drive(
-                new GyroIO() {},
-                new ModuleIO() {},
-                new ModuleIO() {},
-                new ModuleIO() {},
-                new ModuleIO() {});
-        vision = new Vision(drive::addVisionMeasurement, new VisionIO() {}, new VisionIO() {});
+        vision = new Vision(subsystemManager.getDriveSubsystem()::addVisionMeasurement, new VisionIO() {}, new VisionIO() {});
 
         pivot = new Pivot(new PivotIOTalonFX());
         extend = new Extend(new ExtendIOTalonFX());
@@ -136,20 +108,20 @@ public class RobotContainer {
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
 
     // Set up SysId routines
-    autoChooser.addOption(
-        "Drive Wheel Radius Characterization", DriveCommands.wheelRadiusCharacterization(drive));
-    autoChooser.addOption(
-        "Drive Simple FF Characterization", DriveCommands.feedforwardCharacterization(drive));
-    autoChooser.addOption(
-        "Drive SysId (Quasistatic Forward)",
-        drive.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
-    autoChooser.addOption(
-        "Drive SysId (Quasistatic Reverse)",
-        drive.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
-    autoChooser.addOption(
-        "Drive SysId (Dynamic Forward)", drive.sysIdDynamic(SysIdRoutine.Direction.kForward));
-    autoChooser.addOption(
-        "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+    // autoChooser.addOption(
+    //     "Drive Wheel Radius Characterization", DriveCommands.wheelRadiusCharacterization(drive));
+    // autoChooser.addOption(
+    //     "Drive Simple FF Characterization", DriveCommands.feedforwardCharacterization(drive));
+    // autoChooser.addOption(
+    //     "Drive SysId (Quasistatic Forward)",
+    //     drive.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
+    // autoChooser.addOption(
+    //     "Drive SysId (Quasistatic Reverse)",
+    //     drive.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
+    // autoChooser.addOption(
+    //     "Drive SysId (Dynamic Forward)", drive.sysIdDynamic(SysIdRoutine.Direction.kForward));
+    // autoChooser.addOption(
+    //     "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
 
     // Configure the button bindings
     configureButtonBindings();
@@ -163,9 +135,9 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
     // Default command, normal field-relative drive
-    drive.setDefaultCommand(
+    subsystemManager.getDriveSubsystem().setDefaultCommand(
         DriveCommands.joystickDrive(
-            drive,
+            subsystemManager.getDriveSubsystem(),
             () -> -controller.getLeftY(),
             () -> -controller.getLeftX(),
             () -> -controller.getRightX()));
@@ -189,9 +161,9 @@ public class RobotContainer {
         .onTrue(
             Commands.runOnce(
                     () ->
-                        drive.setPose(
-                            new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
-                    drive)
+                    subsystemManager.getDriveSubsystem().setPose(
+                            new Pose2d(subsystemManager.getDriveSubsystem().getPose().getTranslation(), new Rotation2d())),
+                            subsystemManager.getDriveSubsystem())
                 .ignoringDisable(true));
 
 

@@ -23,7 +23,10 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants;
 
-import edu.wpi.first.math.filter.Debouncer;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.kinematics.SwerveModulePosition;
+import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
@@ -66,11 +69,19 @@ public class SwerveModule {
     private final StatusSignal<Voltage> turnAppliedVolts;
     private final StatusSignal<Current> turnCurrent;
 
-    // Connection debouncers
-    private final Debouncer driveConnectedDebounce = new Debouncer(0.5);
-    private final Debouncer turnConnectedDebounce = new Debouncer(0.5);
-    private final Debouncer turnEncoderConnectedDebounce = new Debouncer(0.5);
-
+    private double drivePositionRad;
+    private double driveVelocityRadPerSec;
+    private double driveVolts;
+    private double turnVolts;
+    private double driveCurrentAmps;
+    private double turnCurrentAmps;
+    private Rotation2d turnAbsPosition;
+    private Rotation2d turnPos;
+    private double turnVelocityRadPerSec;
+    private double[] odometryTimestamps;
+    private double[] odometryDrivePositionsRad;
+    private Rotation2d[] odometryTurnPositions;
+    private SwerveModuleState desiredState;
 
     public SwerveModule(SwerveModuleConstants<TalonFXConfiguration, TalonFXConfiguration, CANcoderConfiguration> constants) {
         this.constants = constants;
@@ -158,5 +169,117 @@ public class SwerveModule {
             turnAppliedVolts,
             turnCurrent);
         ParentDevice.optimizeBusUtilizationForAll(driveTalon, turnTalon);
+    }
+
+    public void runPeriodic() {
+        // Update drive inputs
+        drivePositionRad = Units.rotationsToRadians(drivePosition.getValueAsDouble());
+        driveVelocityRadPerSec = Units.rotationsToRadians(driveVelocity.getValueAsDouble());
+        driveVolts = driveAppliedVolts.getValueAsDouble();
+        driveCurrentAmps = driveCurrent.getValueAsDouble();
+
+        // Update turn inputs
+        turnAbsPosition = Rotation2d.fromRotations(turnAbsolutePosition.getValueAsDouble());
+        turnPos = Rotation2d.fromRotations(turnPosition.getValueAsDouble());
+        turnVelocityRadPerSec = Units.rotationsToRadians(turnVelocity.getValueAsDouble());
+        turnVolts = turnAppliedVolts.getValueAsDouble();
+        turnCurrentAmps = turnCurrent.getValueAsDouble();
+
+        // Update odometry inputs
+        odometryTimestamps =
+            timestampQueue.stream().mapToDouble((Double value) -> value).toArray();
+        odometryDrivePositionsRad =
+            drivePositionQueue.stream()
+                .mapToDouble((Double value) -> Units.rotationsToRadians(value))
+                .toArray();
+        odometryTurnPositions =
+            turnPositionQueue.stream()
+                .map((Double value) -> Rotation2d.fromRotations(value))
+                .toArray(Rotation2d[]::new);
+        timestampQueue.clear();
+        drivePositionQueue.clear();
+        turnPositionQueue.clear();
+    }
+
+    public void setDesiredState(SwerveModuleState state) {
+        // Optimize velocity setpoint
+        state.optimize(turnPos);
+        state.cosineScale(turnPos);
+        desiredState = state;
+
+        // Apply setpoints
+        setDriveVelocity(state.speedMetersPerSecond / constants.WheelRadius);
+        setTurnPosition(state.angle);
+    }
+
+    private void setDriveVelocity(double velocityRadPerSec) {
+        double velocityRotPerSec = Units.radiansToRotations(velocityRadPerSec);
+        driveTalon.setControl(
+            switch (constants.DriveMotorClosedLoopOutput) {
+            case Voltage -> velocityVoltageRequest.withVelocity(velocityRotPerSec);
+            case TorqueCurrentFOC -> velocityTorqueCurrentRequest.withVelocity(velocityRotPerSec);
+            }
+        );
+    }
+
+    private void setTurnPosition(Rotation2d rotation) {
+        turnTalon.setControl(
+            switch (constants.SteerMotorClosedLoopOutput) {
+            case Voltage -> positionVoltageRequest.withPosition(rotation.getRotations());
+            case TorqueCurrentFOC -> positionTorqueCurrentRequest.withPosition(
+                rotation.getRotations());
+            }
+        );
+    }
+
+    /**
+     * Returns the current state of the module.
+     *
+     * @return The current state of the module.
+     */
+    public SwerveModuleState getState() {
+        return new SwerveModuleState(driveVelocityRadPerSec * constants.WheelRadius,
+            turnPos);
+    }
+
+    /**
+     * Returns the current position of the module.
+     *
+     * @return The current position of the module.
+     */
+    public SwerveModulePosition getPosition() {
+        return new SwerveModulePosition(drivePositionRad * constants.WheelRadius,
+            turnPos);
+    }
+
+    public SwerveModulePosition[] getOdometryPositions() {
+        int sampleCount = odometryTimestamps.length; // All signals are sampled together
+        SwerveModulePosition[] odometryPositions = new SwerveModulePosition[sampleCount];
+        for (int i = 0; i < sampleCount; i++) {
+            double positionMeters = odometryDrivePositionsRad[i] * constants.WheelRadius;
+            Rotation2d angle = odometryTurnPositions[i];
+            odometryPositions[i] = new SwerveModulePosition(positionMeters, angle);
+        }
+        return odometryPositions;
+    }
+
+    public double[] getOdometryTimestamps() {
+        return odometryTimestamps;
+    }
+
+    public void setDriveOpenLoop(double output) {
+        driveTalon.setControl(
+            switch (constants.DriveMotorClosedLoopOutput) {
+            case Voltage -> voltageRequest.withOutput(output);
+            case TorqueCurrentFOC -> torqueCurrentRequest.withOutput(output);
+            });
+    }
+
+    public void setTurnOpenLoop(double output) {
+        turnTalon.setControl(
+            switch (constants.SteerMotorClosedLoopOutput) {
+            case Voltage -> voltageRequest.withOutput(output);
+            case TorqueCurrentFOC -> torqueCurrentRequest.withOutput(output);
+            });
     }
 }
