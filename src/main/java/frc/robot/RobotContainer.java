@@ -15,11 +15,14 @@ package frc.robot;
 
 import static frc.robot.subsystems.vision.VisionConstants.*;
 
+import javax.sound.midi.Sequence;
+
 import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -35,6 +38,7 @@ import frc.robot.subsystems.drive.ModuleIOTalonFX;
 import frc.robot.subsystems.extend.Extend;
 import frc.robot.subsystems.extend.ExtendIOTalonFX;
 import frc.robot.subsystems.leds.Leds;
+import frc.robot.subsystems.leds.LedsIOLED;
 import frc.robot.subsystems.pivot.Pivot;
 import frc.robot.subsystems.pivot.PivotIOTalonFX;
 import frc.robot.subsystems.sensors.Sensors;
@@ -61,7 +65,7 @@ public class RobotContainer {
   private final Extend extend;
   private final Vacuum vacuum;
   private final Sensors sensors;
-//   private final Leds leds;
+  private final Leds leds;
 
 
   // Controller
@@ -97,6 +101,7 @@ public class RobotContainer {
                 extend = new Extend(new ExtendIOTalonFX());
                 vacuum = new Vacuum(new VacuumIOServo());
                 sensors = new Sensors(new SensorsIOCanrange());
+                leds = new Leds(new LedsIOLED());
 
         break;
 
@@ -122,6 +127,7 @@ public class RobotContainer {
                 extend = null;
                 vacuum = null;
                 sensors = null;
+                leds = null;
         break;
 
       default:
@@ -140,6 +146,7 @@ public class RobotContainer {
         extend = new Extend(new ExtendIOTalonFX());
         vacuum = new Vacuum(new VacuumIOServo());
         sensors = new Sensors(new SensorsIOCanrange());
+        leds = new Leds(new LedsIOLED());
         break;
     }
 
@@ -209,23 +216,23 @@ public class RobotContainer {
 
 
 
-
+    leds.setDefaultCommand(Commands.run(() -> leds.setColor(), leds));
 
     //             extend.setDefaultCommand(Commands.sequence(Commands.run(() -> extend.moveExtend(-0.5), extend).until(() -> extend.extendAtSetPoint(-0.5))
     // .andThen(Commands.run(() -> pivot.movePivot(0), pivot))));
 
 
-    m_operatorController.b().whileTrue(
+    m_operatorController.b().whileTrue(Commands.parallel(
         Commands.run(() -> vacuum.runVolts(1), vacuum
-        )
+        ), Commands.run(() -> leds.setColor(), leds))
     ).onFalse(Commands.run(() -> vacuum.runVolts(0), vacuum));
 
 
 
-    m_operatorController.a().whileTrue(
-            Commands.run(() -> vacuum.setServoPosition(90), vacuum)
-    ).onFalse(Commands.run(()->
-        vacuum.setServoPosition(50), vacuum));
+    // m_operatorController.a().whileTrue(
+    //         Commands.run(() -> vacuum.setServoPosition(90), vacuum)
+    // ).onFalse(Commands.run(()->
+    //     vacuum.setServoPosition(50), vacuum));
 
     //Prep Sequences
 
