@@ -76,7 +76,7 @@ public class SwerveModule {
     private double driveCurrentAmps;
     private double turnCurrentAmps;
     private Rotation2d turnAbsPosition;
-    private Rotation2d turnPos;
+    private Rotation2d turnPos = new Rotation2d();
     private double turnVelocityRadPerSec;
     private double[] odometryTimestamps;
     private double[] odometryDrivePositionsRad;

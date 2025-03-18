@@ -37,6 +37,9 @@ public class SubsystemManager {
     }
 
     public final void periodic() {
+        RobotIO io = RobotIO.getInstance();
 
+        io.updateDriveOutput(driveSubsystem.getOutputs());
+        io.updatePigeonOutput(pigeonSubsystem.getOutputs());
     }
 }

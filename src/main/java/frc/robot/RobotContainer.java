@@ -250,7 +250,7 @@ public class RobotContainer implements DriveInputSupplier {
   public DriveInput getDriveInput() {
     DriveInput input = new DriveInput();
 
-    input.setGyroAngle(RobotIO.getInstance().getLatesPigeonOutput().getYawPosition());
+    input.setGyroAngle(RobotIO.getInstance().getLatestPigeonOutput().getYawPosition());
     input.setLatestOdometryPose(RobotIO.getInstance().getLatestDriveOutput().getEstimatedPose());
     input.setXSpeed(-controller.getLeftY());
     input.setYSpeed(-controller.getLeftX());

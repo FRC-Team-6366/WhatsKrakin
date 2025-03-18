@@ -10,10 +10,10 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import frc.entech.subsystems.SubsystemOutput;
 
 public class DriveOutput extends SubsystemOutput {
-  private SwerveModulePosition[] modulePositions;
-  private SwerveModuleState[] moduleStates;
-  private ChassisSpeeds speeds;
-  private Pose2d estimatedPose;
+  private SwerveModulePosition[] modulePositions = new SwerveModulePosition[0];
+  private SwerveModuleState[] moduleStates = new SwerveModuleState[0];
+  private ChassisSpeeds speeds = new ChassisSpeeds();
+  private Pose2d estimatedPose = new Pose2d();
 
   @Override
   public void toLog() {

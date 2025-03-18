@@ -25,7 +25,7 @@ public class RobotIO implements DriveInputSupplier {
     @Override
     public DriveInput getDriveInput() {
         DriveInput di = new DriveInput();
-        di.setGyroAngle(RobotIO.getInstance().getLatesPigeonOutput().getYawPosition());
+        di.setGyroAngle(RobotIO.getInstance().getLatestPigeonOutput().getYawPosition());
         // di.setLatestOdometryPose(latestOdometryPose);
         di.setKey("initialRaw");
         di.setRotation(0.0);
@@ -49,7 +49,7 @@ public class RobotIO implements DriveInputSupplier {
         return this.driveOutput;
     }
 
-    public PigeonOutput getLatesPigeonOutput() {
+    public PigeonOutput getLatestPigeonOutput() {
         return this.pigeonOutput;
     }
 

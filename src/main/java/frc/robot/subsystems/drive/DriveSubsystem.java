@@ -275,9 +275,9 @@ public class DriveSubsystem extends EntechSubsystem<DriveInput, DriveOutput> {
 
             
             // Update gyro angle
-            if (RobotIO.getInstance().getLatesPigeonOutput() != null) {
+            if (RobotIO.getInstance().getLatestPigeonOutput() != null) {
                 // Use the real gyro angle
-                rawGyroRotation = RobotIO.getInstance().getLatesPigeonOutput().getYawPosition();
+                rawGyroRotation = RobotIO.getInstance().getLatestPigeonOutput().getYawPosition();
             } else {
                 // Use the angle delta from the kinematics and module deltas
                 Twist2d twist = kinematics.toTwist2d(moduleDeltas);
@@ -303,7 +303,7 @@ public class DriveSubsystem extends EntechSubsystem<DriveInput, DriveOutput> {
 
     /** Resets the current odometry pose. */
     public void setPose(Pose2d pose) {
-        poseEstimator.resetPosition(RobotIO.getInstance().getLatesPigeonOutput().getYawPosition(), getModulePositions(), pose);
+        poseEstimator.resetPosition(RobotIO.getInstance().getLatestPigeonOutput().getYawPosition(), getModulePositions(), pose);
     }
 
     /** Adds a new timestamped vision measurement. */

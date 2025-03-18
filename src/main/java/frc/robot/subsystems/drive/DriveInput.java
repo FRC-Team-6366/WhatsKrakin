@@ -6,11 +6,11 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import frc.entech.subsystems.SubsystemInput;
 
 public class DriveInput implements SubsystemInput {
-  private double xSpeed;
-  private double ySpeed;
-  private double rot;
-  private Rotation2d gyroAngle;
-  private Pose2d latestOdometryPose;
+  private double xSpeed = 0.0;
+  private double ySpeed = 0.0;
+  private double rot = 0.0;
+  private Rotation2d gyroAngle = new Rotation2d();
+  private Pose2d latestOdometryPose = new Pose2d();
   private String key = "driveInput";
 
   public DriveInput() {}
