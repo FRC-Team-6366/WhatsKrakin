@@ -61,7 +61,7 @@ public class RobotContainer {
   private final Extend extend;
   private final Vacuum vacuum;
   private final Sensors sensors;
-  private final Leds leds;
+//   private final Leds leds;
 
 
   // Controller
@@ -211,26 +211,37 @@ public class RobotContainer {
 
 
 
-                extend.setDefaultCommand(Commands.sequence(Commands.run(() -> extend.moveExtend(-0.5), extend).until(() -> extend.extendAtSetPoint(-0.5))
-    .andThen(Commands.run(() -> pivot.movePivot(0), pivot))));
+    //             extend.setDefaultCommand(Commands.sequence(Commands.run(() -> extend.moveExtend(-0.5), extend).until(() -> extend.extendAtSetPoint(-0.5))
+    // .andThen(Commands.run(() -> pivot.movePivot(0), pivot))));
 
 
+    m_operatorController.b().whileTrue(
+        Commands.run(() -> vacuum.runVolts(1), vacuum
+        )
+    ).onFalse(Commands.run(() -> vacuum.runVolts(0), vacuum));
+
+
+
+    m_operatorController.a().whileTrue(
+            Commands.run(() -> vacuum.setServoPosition(90), vacuum)
+    ).onFalse(Commands.run(()->
+        vacuum.setServoPosition(50), vacuum));
 
     //Prep Sequences
 
-    m_operatorController.a().whileTrue(
-        Commands.sequence(
-            Commands.run(() -> pivot.movePivot(0.547))
-                .until(() -> pivot.pivotAtSetPoint(0.547))
-                .andThen(Commands.run(() -> extend.moveExtend(-0.3)))//L3
-        )
-    ).onFalse(
-            Commands.sequence(
-                Commands.run(() -> extend.moveExtend(0.21))
-                    .until(() -> extend.extendAtSetPoint(0.21))
-                    .andThen(Commands.run(() -> pivot.movePivot(0)))
-            )
-      );
+    // m_operatorController.a().whileTrue(
+    //     Commands.sequence(
+    //         Commands.run(() -> pivot.movePivot(0.547))
+    //             .until(() -> pivot.pivotAtSetPoint(0.547))
+    //             .andThen(Commands.run(() -> extend.moveExtend(-0.3)))//L3
+    //     )
+    // ).onFalse(
+    //         Commands.sequence(
+    //             Commands.run(() -> extend.moveExtend(0.21))
+    //                 .until(() -> extend.extendAtSetPoint(0.21))
+    //                 .andThen(Commands.run(() -> pivot.movePivot(0)))
+    //         )
+    //   );
 
     // m_operatorController.b().whileTrue(
     //     Commands.sequence(
